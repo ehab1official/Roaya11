@@ -30,20 +30,21 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen pb-24">
 
-  <!-- Header -->
+  <!-- Header: Single Line Title -->
   <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-lg sticky top-0 z-30">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">🏢</span>
-          <h1 class="text-lg sm:text-xl font-bold tracking-tight">عمارة 11 - رؤية سيتي</h1>
+    <div class="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex justify-between items-center gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="text-xl sm:text-2xl shrink-0">🏢</span>
+        <div class="min-w-0">
+          <!-- Force Single Line -->
+          <h1 class="text-sm sm:text-lg font-black tracking-tight whitespace-nowrap truncate">عمارة 11 - رؤية سيتي</h1>
+          <p class="text-[10px] sm:text-xs text-emerald-100 font-medium whitespace-nowrap truncate">نظام المدفوعات والخزينة والصيانة</p>
         </div>
-        <p class="text-[11px] text-emerald-100 font-medium">نظام المدفوعات والخزينة والصيانة</p>
       </div>
 
       <!-- Mode Switcher (Admin / Resident) -->
-      <div class="flex items-center gap-2">
-        <button id="admin-mode-btn" onclick="toggleAdminModeClick()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/60 hover:bg-slate-900 text-amber-300">
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="admin-mode-btn" onclick="toggleAdminModeClick()" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/60 hover:bg-slate-900 text-amber-300 whitespace-nowrap">
           <span id="admin-icon">🔒</span>
           <span id="admin-mode-label">دخول الأدمن</span>
         </button>
@@ -55,59 +56,64 @@
   </header>
 
   <!-- Banner indicator of current role -->
-  <div id="role-banner" class="bg-blue-50 border-b border-blue-200 px-4 py-2 text-xs flex justify-between items-center transition">
-    <div class="flex items-center gap-2">
-      <span id="role-status-dot" class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
-      <span id="role-status-text" class="text-blue-900 font-bold">أنت الآن في: وضع الساكن (عرض ومتابعة فقط)</span>
+  <div id="role-banner" class="bg-blue-50 border-b border-blue-200 px-3 sm:px-4 py-2 text-xs flex justify-between items-center transition">
+    <div class="flex items-center gap-2 min-w-0">
+      <span id="role-status-dot" class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shrink-0"></span>
+      <span id="role-status-text" class="text-blue-900 font-bold truncate">أنت الآن في: وضع الساكن (عرض ومتابعة فقط)</span>
     </div>
-    <span class="text-[11px] text-blue-700 font-medium hidden sm:inline">اضغط على زر الأدمن بالأعلى للتحكم والإضافة</span>
+    <span class="text-[11px] text-blue-700 font-medium hidden sm:inline shrink-0">اضغط على زر الأدمن بالأعلى للتحكم والإضافة</span>
   </div>
 
   <!-- Top Metrics Overview (Clean) -->
   <main class="max-w-4xl mx-auto px-3 sm:px-4 pt-3.5">
-    <div class="grid grid-cols-3 gap-2.5 sm:gap-3 mb-3.5">
+    <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-3">
       <!-- Balance Card -->
-      <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200/90 flex flex-col justify-center">
+      <div class="bg-white p-2.5 sm:p-3.5 rounded-xl shadow-sm border border-slate-200/90 flex flex-col justify-center text-center sm:text-right">
         <span class="text-[11px] sm:text-xs font-bold text-slate-500">رصيد الصندوق</span>
-        <div class="mt-1">
-          <span id="stat-net-balance" class="text-lg sm:text-2xl font-black text-emerald-600">0</span>
+        <div class="mt-0.5">
+          <span id="stat-net-balance" class="text-base sm:text-2xl font-black text-emerald-600">0</span>
           <span class="text-[10px] sm:text-xs text-slate-500 font-bold">ج.م</span>
         </div>
       </div>
 
       <!-- Inflow Card -->
-      <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200/90 flex flex-col justify-center">
+      <div class="bg-white p-2.5 sm:p-3.5 rounded-xl shadow-sm border border-slate-200/90 flex flex-col justify-center text-center sm:text-right">
         <span class="text-[11px] sm:text-xs font-bold text-slate-500">المحصل</span>
-        <div class="mt-1">
-          <span id="stat-total-in" class="text-lg sm:text-2xl font-black text-blue-600">0</span>
+        <div class="mt-0.5">
+          <span id="stat-total-in" class="text-base sm:text-2xl font-black text-blue-600">0</span>
           <span class="text-[10px] sm:text-xs text-slate-500 font-bold">ج.م</span>
         </div>
       </div>
 
       <!-- Outflow Card -->
-      <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200/90 flex flex-col justify-center">
+      <div class="bg-white p-2.5 sm:p-3.5 rounded-xl shadow-sm border border-slate-200/90 flex flex-col justify-center text-center sm:text-right">
         <span class="text-[11px] sm:text-xs font-bold text-slate-500">المنصرف</span>
-        <div class="mt-1">
-          <span id="stat-total-out" class="text-lg sm:text-2xl font-black text-rose-600">0</span>
+        <div class="mt-0.5">
+          <span id="stat-total-out" class="text-base sm:text-2xl font-black text-rose-600">0</span>
           <span class="text-[10px] sm:text-xs text-slate-500 font-bold">ج.م</span>
         </div>
       </div>
     </div>
 
-    <!-- Active Setup Note -->
-    <div class="bg-emerald-50 border border-emerald-200/90 rounded-xl p-2.5 mb-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-      <div class="flex items-center gap-1.5">
+    <!-- Active Setup Note (Includes Monthly Collections) -->
+    <div class="bg-emerald-50 border border-emerald-200/90 rounded-xl p-2.5 mb-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2">
         <span class="text-base">📅</span>
         <span class="font-bold text-emerald-950">رصد الاشتراكات:</span>
-        <span class="bg-emerald-200/80 text-emerald-950 font-black px-2 py-0.5 rounded">أكتوبر 2026</span>
+        <span class="bg-emerald-200/90 text-emerald-950 font-black px-2 py-0.5 rounded">أكتوبر 2026</span>
       </div>
-      <div class="text-emerald-900 font-bold">
-        الاشتراك الشهري: <span class="font-black text-emerald-950">200 ج.م</span>
+      <div class="flex items-center gap-3">
+        <div class="text-emerald-900 font-bold">
+          تحصيلات الشهر: <span id="stat-oct-collections" class="font-black text-emerald-700 bg-white px-2 py-0.5 rounded border border-emerald-200">0 ج.م</span>
+        </div>
+        <div class="text-slate-600 font-semibold hidden sm:inline">
+          الاشتراك: <span class="font-bold text-slate-900">200 ج.م</span>
+        </div>
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="flex bg-slate-200/90 p-1 rounded-xl mb-3.5 text-xs sm:text-sm font-bold">
+    <!-- Navigation Tabs (Renamed to: الشقق | المنصرف | كشف الحساب) -->
+    <div class="flex bg-slate-200/90 p-1 rounded-xl mb-3 text-xs sm:text-sm font-bold">
       <button onclick="switchTab('apartments')" id="tab-btn-apartments" class="flex-1 py-2 rounded-lg transition text-slate-700 hover:text-slate-900">
         🏢 الشقق
       </button>
@@ -115,7 +121,7 @@
         💸 المنصرف
       </button>
       <button onclick="switchTab('ledger')" id="tab-btn-ledger" class="flex-1 py-2 rounded-lg transition text-slate-700 hover:text-slate-900">
-        📊 كشف الحساب العام
+        📊 كشف الحساب
       </button>
     </div>
 
@@ -183,7 +189,7 @@
         <span>هذا السجل يوضح أوجه صرف أموال الصندوق بشفافية تامة لجميع ملاك العمارة.</span>
       </div>
 
-      <!-- Expenses List -->
+      <!-- Expenses List: "سجل مصروفات العمارة" -->
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
           <h3 class="font-black text-slate-700 text-xs sm:text-sm">سجل مصروفات العمارة</h3>
@@ -195,7 +201,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: GENERAL LEDGER & REPORT (كشف الحساب العام) -->
+    <!-- TAB 3: GENERAL LEDGER (كشف الحساب) -->
     <section id="tab-content-ledger" class="hidden">
       <!-- WhatsApp Report Copy Button -->
       <div class="bg-emerald-700 text-white p-3.5 rounded-xl mb-3.5 flex justify-between items-center shadow">
@@ -211,7 +217,7 @@
 
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-          <h3 class="font-black text-slate-700 text-xs sm:text-sm">كشف الموقف المالي لجميع الشقق</h3>
+          <h3 class="font-black text-slate-700 text-xs sm:text-sm">كشف الحساب</h3>
           <span class="text-xs text-slate-500 font-bold">24 شقة</span>
         </div>
         <div class="overflow-x-auto">
@@ -256,9 +262,10 @@
         <div id="modal-admin-settings" class="bg-slate-50 border border-slate-200 rounded-xl p-3 hidden">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-bold text-slate-700">⚙️ إعدادات الشقة (صلاحيات الأدمن):</span>
+            <!-- Renamed checkbox label to "غير متاح" -->
             <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-rose-700">
               <input type="checkbox" id="modal-is-duplicate" onchange="toggleDuplicateUnit(this.checked)" class="w-4 h-4 text-rose-600 rounded focus:ring-rose-500">
-              <span>شقة تانية ملغية (✕)</span>
+              <span>غير متاح</span>
             </label>
           </div>
           <div class="flex gap-2">
@@ -267,10 +274,10 @@
           </div>
         </div>
 
-        <!-- Duplicate unit warning if inactive -->
+        <!-- Inactive warning if disabled/duplicate -->
         <div id="duplicate-warning" class="bg-rose-50 border border-rose-200 text-rose-800 rounded-xl p-3 text-xs font-bold hidden flex items-center gap-2">
           <span>✕</span>
-          <span>هذه الشقة تم تعليمها كشقة ثانية لمالك يمتلك شقتين، وهي معفاة وخارج حسابات الاشتراكات.</span>
+          <span>هذه الشقة تم تعليمها كـ (غير متاح)، وهي معفاة وخارج حسابات الاشتراكات.</span>
         </div>
 
         <!-- Add Payment Section - Visible ONLY for Admin -->
@@ -283,9 +290,10 @@
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">نوع الدفعة</label>
+                <!-- Clean dropdown without extra text -->
                 <select id="payment-type" onchange="handlePaymentTypeChange()" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg bg-white font-bold text-slate-800">
-                  <option value="اشتراك شهري">اشتراك شهري (200 ج)</option>
-                  <option value="صيانة طارئة">صيانة طارئة (مبلغ محدد)</option>
+                  <option value="اشتراك شهري">اشتراك شهري</option>
+                  <option value="صيانة طارئة">صيانة طارئة</option>
                 </select>
               </div>
               <div>
@@ -298,13 +306,7 @@
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">تسجيل لشهر:</label>
                 <select id="payment-month" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg bg-white font-semibold">
-                  <option value="أكتوبر 2026">أكتوبر 2026</option>
-                  <option value="نوفمبر 2026">نوفمبر 2026</option>
-                  <option value="ديسمبر 2026">ديسمبر 2026</option>
-                  <option value="يناير 2027">يناير 2027</option>
-                  <option value="فبراير 2027">فبراير 2027</option>
-                  <option value="مارس 2027">مارس 2027</option>
-                  <option value="أبريل 2027">أبريل 2027</option>
+                  <!-- Populated dynamically via JS with unpaid months -->
                 </select>
               </div>
               <div>
@@ -351,7 +353,7 @@
     </div>
   </div>
 
-  <!-- ADMIN PIN LOGIN MODAL -->
+  <!-- ADMIN PIN LOGIN MODAL (Completely masked - no password text) -->
   <div id="pin-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-3">
     <div class="bg-white w-full max-w-xs rounded-2xl shadow-2xl p-4 space-y-3 animate-in fade-in zoom-in duration-150">
       <div class="text-center">
@@ -361,8 +363,9 @@
       </div>
       <form onsubmit="handleAdminLogin(event)" class="space-y-3">
         <div>
-          <input type="password" id="admin-pin-input" placeholder="الرمز السري (1124)" autofocus class="w-full text-center tracking-widest text-lg font-black px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-          <p id="pin-error" class="text-[11px] text-rose-600 font-bold text-center mt-1 hidden">الرمز غير صحيح! برجاء إدخال الرمز: 1124</p>
+          <!-- Masked input, clean placeholder without displaying password -->
+          <input type="password" id="admin-pin-input" placeholder="••••" autofocus class="w-full text-center tracking-widest text-lg font-black px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+          <p id="pin-error" class="text-[11px] text-rose-600 font-bold text-center mt-1 hidden">الرمز غير صحيح! يرجى إدخال الرمز الصحيح.</p>
         </div>
         <div class="flex gap-2">
           <button type="button" onclick="closePinModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-xs transition">إلغاء</button>
@@ -432,10 +435,15 @@
       "يناير 2027",
       "فبراير 2027",
       "مارس 2027",
-      "أبريل 2027"
+      "أبريل 2027",
+      "مايو 2027",
+      "يونيو 2027",
+      "يوليو 2027",
+      "أغسطس 2027",
+      "سبتمبر 2027"
     ];
 
-    const STORAGE_KEY = 'bldg11_roaya_data_live_pin1124_v4';
+    const STORAGE_KEY = 'bldg11_roaya_data_v5_prod';
     const ADMIN_PIN = '1124';
 
     // App State
@@ -542,26 +550,26 @@
       const residentNotice = document.getElementById('resident-expense-notice');
 
       if (isAdminMode) {
-        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black shadow transition bg-amber-400 hover:bg-amber-500 text-slate-950";
+        btn.className = "flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black shadow transition bg-amber-400 hover:bg-amber-500 text-slate-950 whitespace-nowrap";
         icon.innerText = "🔓";
         label.innerText = "خروج من الأدمن";
 
-        banner.className = "bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs flex justify-between items-center transition";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
-        text.className = "text-amber-950 font-black";
+        banner.className = "bg-amber-50 border-b border-amber-200 px-3 sm:px-4 py-2 text-xs flex justify-between items-center transition";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0";
+        text.className = "text-amber-950 font-black truncate";
         text.innerText = "أنت الآن في: وضع الأدمن الكامل (صلاحيات الإضافة والحذف والتعديل مفعلة)";
 
         if (adminExpenseCard) adminExpenseCard.classList.remove('hidden');
         if (residentNotice) residentNotice.classList.add('hidden');
       } else {
-        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/60 hover:bg-slate-900 text-amber-300";
+        btn.className = "flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/60 hover:bg-slate-900 text-amber-300 whitespace-nowrap";
         icon.innerText = "🔒";
         label.innerText = "دخول الأدمن";
 
-        banner.className = "bg-blue-50 border-b border-blue-200 px-4 py-2 text-xs flex justify-between items-center transition";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse";
-        text.className = "text-blue-900 font-bold";
-        text.innerText = "أنت الآن في: وضع الساكن (عرض ومتابعة الحسابات فقط)";
+        banner.className = "bg-blue-50 border-b border-blue-200 px-3 sm:px-4 py-2 text-xs flex justify-between items-center transition";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shrink-0";
+        text.className = "text-blue-900 font-bold truncate";
+        text.innerText = "أنت الآن في: وضع الساكن (عرض ومتابعة فقط)";
 
         if (adminExpenseCard) adminExpenseCard.classList.add('hidden');
         if (residentNotice) residentNotice.classList.remove('hidden');
@@ -589,6 +597,12 @@
       return appData.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
     }
 
+    function getOctoberCollections() {
+      return appData.payments
+        .filter(p => p.month === 'أكتوبر 2026')
+        .reduce((sum, p) => sum + Number(p.amount), 0);
+    }
+
     function renderAll() {
       renderMetrics();
       renderFloors();
@@ -603,10 +617,12 @@
       const totalIn = getTotalCollections();
       const totalOut = getTotalExpenses();
       const net = totalIn - totalOut;
+      const octCollections = getOctoberCollections();
 
       document.getElementById('stat-total-in').innerText = totalIn.toLocaleString('ar-EG');
       document.getElementById('stat-total-out').innerText = totalOut.toLocaleString('ar-EG');
       document.getElementById('stat-net-balance').innerText = net.toLocaleString('ar-EG');
+      document.getElementById('stat-oct-collections').innerText = octCollections.toLocaleString('ar-EG') + ' ج.م';
     }
 
     // Render Floors & Apartment Cards
@@ -632,15 +648,17 @@
           btn.type = 'button';
           btn.onclick = () => openAptModal(uNum);
 
-          const ownerDisplay = unit.ownerName ? unit.ownerName : '<span class="text-slate-300 italic">غير مسجل</span>';
+          // Note 6: Display "غير متاح" instead of "غير مسجل"
+          const ownerDisplay = unit.ownerName ? unit.ownerName : '<span class="text-slate-400 font-bold">غير متاح</span>';
 
+          // Note 7: Inactive / Duplicate Unit shows "✕ غير متاح"
           if (unit.isDuplicate) {
             btn.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-400 flex flex-col items-center justify-center relative overflow-hidden transition active:scale-95 opacity-75';
             btn.innerHTML = `
               <span class="text-xs font-black text-slate-500">شقة ${uNum}</span>
-              <span class="text-[10px] text-slate-400 truncate max-w-full">${ownerDisplay}</span>
+              <span class="text-[10px] text-slate-400 truncate max-w-full">${unit.ownerName || 'غير متاح'}</span>
               <div class="mt-1 px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-black text-[11px] flex items-center gap-0.5">
-                <span>✕</span> <span>ملغية</span>
+                <span>✕</span> <span>غير متاح</span>
               </div>
             `;
           } else {
@@ -690,7 +708,7 @@
       if (!unit) return;
 
       document.getElementById('modal-apt-number').innerText = `شقة ${unitId}`;
-      document.getElementById('modal-apt-title').innerText = unit.ownerName ? unit.ownerName : 'مالك غير مسجل';
+      document.getElementById('modal-apt-title').innerText = unit.ownerName ? unit.ownerName : 'غير متاح';
       document.getElementById('modal-apt-floor').innerText = unit.floorName;
       document.getElementById('modal-owner-name').value = unit.ownerName || '';
       document.getElementById('modal-is-duplicate').checked = !!unit.isDuplicate;
@@ -714,7 +732,7 @@
         colDeleteHeader.classList.add('hidden');
       }
 
-      // Check duplicate unit warning
+      // Check inactive warning
       const duplicateWarning = document.getElementById('duplicate-warning');
       if (unit.isDuplicate) {
         duplicateWarning.classList.remove('hidden');
@@ -722,7 +740,7 @@
         duplicateWarning.classList.add('hidden');
       }
 
-      suggestNextMonthForUnit(unitId);
+      populateMonthsDropdown(unitId);
       renderModalPayments(unitId);
 
       document.getElementById('apt-modal').classList.remove('hidden');
@@ -733,11 +751,33 @@
       selectedUnitId = null;
     }
 
-    function suggestNextMonthForUnit(unitId) {
-      const paidMonths = getUnitMonthlyPaidMonths(unitId);
+    // Note 4: Populate months dropdown and disable already-paid months for this unit
+    function populateMonthsDropdown(unitId) {
       const select = document.getElementById('payment-month');
-      const nextUnpaid = MONTHS_ORDER.find(m => !paidMonths.includes(m)) || MONTHS_ORDER[0];
-      select.value = nextUnpaid;
+      select.innerHTML = '';
+
+      const paidMonths = getUnitMonthlyPaidMonths(unitId);
+
+      let firstAvailable = null;
+
+      MONTHS_ORDER.forEach(m => {
+        const option = document.createElement('option');
+        option.value = m;
+        if (paidMonths.includes(m)) {
+          option.innerText = `${m} (مسدد مسبقاً ✓)`;
+          option.disabled = true;
+          option.className = 'text-slate-400 bg-slate-100';
+        } else {
+          option.innerText = m;
+          option.className = 'text-slate-800 font-bold';
+          if (!firstAvailable) firstAvailable = m;
+        }
+        select.appendChild(option);
+      });
+
+      if (firstAvailable) {
+        select.value = firstAvailable;
+      }
     }
 
     function toggleDuplicateUnit(isDuplicate) {
@@ -763,7 +803,7 @@
       if (!isAdminMode || !selectedUnitId) return;
       const name = document.getElementById('modal-owner-name').value.trim();
       appData.units[selectedUnitId].ownerName = name;
-      document.getElementById('modal-apt-title').innerText = name || 'مالك غير مسجل';
+      document.getElementById('modal-apt-title').innerText = name || 'غير متاح';
       saveToStorage();
       renderAll();
       alert('تم حفظ اسم المالك بنجاح!');
@@ -793,6 +833,15 @@
 
       if (!amount || amount <= 0) return;
 
+      // Note 4: Strict validation: If already paid for this month, reject!
+      if (type === 'اشتراك شهري') {
+        const paidMonths = getUnitMonthlyPaidMonths(selectedUnitId);
+        if (paidMonths.includes(month)) {
+          alert(`عفواً، تم سداد اشتراك (${month}) مسبقاً لهذه الشقة! لا يمكن تسجيل دفعة أخرى لنفس الشهر.`);
+          return;
+        }
+      }
+
       const newPayment = {
         id: 'pay_' + Date.now(),
         unitId: selectedUnitId,
@@ -807,7 +856,7 @@
 
       renderAll();
       renderModalPayments(selectedUnitId);
-      suggestNextMonthForUnit(selectedUnitId);
+      populateMonthsDropdown(selectedUnitId);
     }
 
     function deletePayment(payId) {
@@ -818,7 +867,7 @@
       renderAll();
       if (selectedUnitId) {
         renderModalPayments(selectedUnitId);
-        suggestNextMonthForUnit(selectedUnitId);
+        populateMonthsDropdown(selectedUnitId);
       }
     }
 
@@ -900,7 +949,7 @@
       countEl.innerText = `${appData.expenses.length} بند`;
 
       if (appData.expenses.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-slate-400 font-medium">لم يتم تسجيل أي منصرفات بعد.</div>`;
+        container.innerHTML = `<div class="p-6 text-center text-slate-400 font-medium">لم يتم تسجيل أي مصروفات بعد.</div>`;
         return;
       }
 
@@ -926,7 +975,7 @@
       });
     }
 
-    // LEDGER TABLE
+    // LEDGER TABLE (كشف الحساب)
     function renderLedgerTable() {
       const tbody = document.getElementById('ledger-table-body');
       tbody.innerHTML = '';
@@ -942,14 +991,14 @@
           if (e.target.tagName !== 'BUTTON') openAptModal(uNum);
         };
 
-        const ownerDisplay = unit.ownerName ? unit.ownerName : '<span class="text-slate-300 italic">غير مسجل</span>';
+        const ownerDisplay = unit.ownerName ? unit.ownerName : '<span class="text-slate-400 font-bold">غير متاح</span>';
 
         if (unit.isDuplicate) {
           tr.className += ' bg-slate-50/70 text-slate-400';
           tr.innerHTML = `
             <td class="p-2.5 font-bold">شقة ${uNum}</td>
             <td class="p-2.5">${ownerDisplay}</td>
-            <td class="p-2.5"><span class="bg-slate-200 text-slate-600 text-[10px] font-black px-2 py-0.5 rounded">✕ ملغية (مالك مكرر)</span></td>
+            <td class="p-2.5"><span class="bg-slate-200 text-slate-600 text-[10px] font-black px-2 py-0.5 rounded">✕ غير متاح</span></td>
             <td class="p-2.5">-</td>
             <td class="p-2.5 text-slate-400">معفاة من الاشتراك</td>
             <td class="p-2.5 font-bold">0 ج</td>
@@ -1015,9 +1064,9 @@
       text += `📤 *المنصرف:* ${totalOut.toLocaleString('ar-EG')} ج.م\n`;
       text += `🏢 *المسددين لشهر أكتوبر:* (${paidOctUnits.length} من أصل ${activeUnits.length} شقة نشطة)\n\n`;
 
-      text += `💸 *أبرز المنصرفات:*\n`;
+      text += `💸 *أبرز المصروفات:*\n`;
       if (appData.expenses.length === 0) {
-        text += `- لا توجد منصرفات مسجلة بعد.\n`;
+        text += `- لا توجد مصروفات مسجلة بعد.\n`;
       } else {
         appData.expenses.slice(0, 5).forEach(e => {
           text += `• ${e.title}: ${e.amount} ج.م (${e.date})\n`;
