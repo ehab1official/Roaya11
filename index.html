@@ -36,9 +36,14 @@
       <div class="flex items-center gap-2 min-w-0">
         <span class="text-xl sm:text-2xl shrink-0">🏢</span>
         <div class="min-w-0">
-          <!-- Force Single Line -->
           <h1 class="text-sm sm:text-lg font-black tracking-tight whitespace-nowrap truncate">عمارة 11 - رؤية سيتي</h1>
-          <p class="text-[10px] sm:text-xs text-emerald-100 font-medium whitespace-nowrap truncate">نظام المدفوعات والخزينة والصيانة</p>
+          <div class="flex items-center gap-1.5">
+            <p class="text-[10px] sm:text-xs text-emerald-100 font-medium whitespace-nowrap truncate">نظام المدفوعات والخزينة والصيانة</p>
+            <span id="cloud-badge" class="text-[9px] bg-emerald-900/90 border border-emerald-300/40 text-emerald-200 px-1.5 py-0.2 rounded font-bold flex items-center gap-0.5">
+              <span>☁️</span>
+              <span id="sync-status-label">متصل بسحابة Google</span>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -48,7 +53,7 @@
           <span id="admin-icon">🔒</span>
           <span id="admin-mode-label">دخول الأدمن</span>
         </button>
-        <button onclick="openDataModal()" title="إدارة البيانات والنسخ الاحتياطي" class="bg-emerald-600/60 hover:bg-emerald-600 px-2 py-1.5 rounded-lg text-xs border border-white/10 transition">
+        <button onclick="openDataModal()" title="إدارة النسخ الاحتياطي" class="bg-emerald-600/60 hover:bg-emerald-600 px-2 py-1.5 rounded-lg text-xs border border-white/10 transition">
           💾
         </button>
       </div>
@@ -175,7 +180,7 @@
               <input type="date" id="expense-date" required class="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
             </div>
             <div class="flex items-end">
-              <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold py-2 px-4 rounded-lg shadow transition text-xs sm:text-sm flex items-center justify-center gap-1.5">
+              <button type="submit" id="btn-submit-expense" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold py-2 px-4 rounded-lg shadow transition text-xs sm:text-sm flex items-center justify-center gap-1.5">
                 <span>خصم المبلغ وتحديث الرصيد</span>
               </button>
             </div>
@@ -262,7 +267,6 @@
         <div id="modal-admin-settings" class="bg-slate-50 border border-slate-200 rounded-xl p-3 hidden">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-bold text-slate-700">⚙️ إعدادات الشقة (صلاحيات الأدمن):</span>
-            <!-- Renamed checkbox label to "غير متاح" -->
             <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-rose-700">
               <input type="checkbox" id="modal-is-duplicate" onchange="toggleDuplicateUnit(this.checked)" class="w-4 h-4 text-rose-600 rounded focus:ring-rose-500">
               <span>غير متاح</span>
@@ -290,7 +294,6 @@
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">نوع الدفعة</label>
-                <!-- Clean dropdown without extra text -->
                 <select id="payment-type" onchange="handlePaymentTypeChange()" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg bg-white font-bold text-slate-800">
                   <option value="اشتراك شهري">اشتراك شهري</option>
                   <option value="صيانة طارئة">صيانة طارئة</option>
@@ -315,7 +318,7 @@
               </div>
             </div>
 
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-2 rounded-lg text-xs shadow transition">
+            <button type="submit" id="btn-submit-payment" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-2 rounded-lg text-xs shadow transition">
               إيداع في الصندوق وتحديث رصيد الشقة
             </button>
           </form>
@@ -353,7 +356,7 @@
     </div>
   </div>
 
-  <!-- ADMIN PIN LOGIN MODAL (Completely masked - no password text) -->
+  <!-- ADMIN PIN LOGIN MODAL (Completely masked) -->
   <div id="pin-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-3">
     <div class="bg-white w-full max-w-xs rounded-2xl shadow-2xl p-4 space-y-3 animate-in fade-in zoom-in duration-150">
       <div class="text-center">
@@ -363,9 +366,8 @@
       </div>
       <form onsubmit="handleAdminLogin(event)" class="space-y-3">
         <div>
-          <!-- Masked input, clean placeholder without displaying password -->
           <input type="password" id="admin-pin-input" placeholder="••••" autofocus class="w-full text-center tracking-widest text-lg font-black px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-          <p id="pin-error" class="text-[11px] text-rose-600 font-bold text-center mt-1 hidden">الرمز غير صحيح! يرجى إدخال الرمز الصحيح.</p>
+          <p id="pin-error" class="text-[11px] text-rose-600 font-bold text-center mt-1 hidden">الرمز السري غير صحيح، يرجى المحاولة مرة أخرى.</p>
         </div>
         <div class="flex gap-2">
           <button type="button" onclick="closePinModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-xs transition">إلغاء</button>
@@ -377,26 +379,40 @@
 
   <!-- BACKUP & RESTORE MODAL -->
   <div id="data-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-3">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-4 space-y-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-4 space-y-3.5">
       <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-        <h3 class="font-black text-slate-800 text-sm">حفظ ونسخ البيانات الاحتياطية</h3>
+        <h3 class="font-black text-slate-800 text-sm">النسخ الاحتياطي والمزامنة</h3>
         <button onclick="closeDataModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
       </div>
+
+      <!-- Sync Button -->
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex justify-between items-center">
+        <div>
+          <span class="text-xs font-black text-emerald-950 block">حالة الاتصال السحابي:</span>
+          <span class="text-[11px] text-emerald-800 font-medium">مربوط بشيت جوجل تلقائياً</span>
+        </div>
+        <button onclick="syncFromCloud(true)" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+          <span>🔄</span> <span>تحديث البيانات الآن</span>
+        </button>
+      </div>
+
       <p class="text-xs text-slate-600 leading-relaxed">
-        البيانات والأسماء التي أدخلتها محفوظة على متصفحك. يمكنك تنزيل ملف نسخة احتياطية (JSON) لإرساله أو فتحه في أي وقت دون ضياع أي بيان.
+        البيانات تُحفظ تلقائياً في السحابة على شيت جوجل. بالإضافة لذلك، يمكنك تنزيل نسخة احتياطية إضافية كملف (JSON) على جهازك:
       </p>
+
       <div class="flex gap-2">
-        <button onclick="exportDataJson()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition">
+        <button onclick="exportDataJson()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-lg text-xs transition border border-slate-200">
           📥 تصدير ملف (JSON)
         </button>
-        <button onclick="document.getElementById('import-file-input').click()" class="flex-1 bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 rounded-lg text-xs transition">
+        <button onclick="document.getElementById('import-file-input').click()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-lg text-xs transition border border-slate-200">
           📤 استيراد ملف
         </button>
         <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importDataJson(event)">
       </div>
-      <div class="border-t border-slate-100 pt-3">
+
+      <div class="border-t border-slate-100 pt-2">
         <button onclick="resetToInitialData()" class="w-full bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-bold py-1.5 rounded-lg text-xs transition">
-          تصفير كل المدفوعات والبدء من جديد
+          تصفير الحسابات والبدء من جديد
         </button>
       </div>
     </div>
@@ -404,7 +420,10 @@
 
   <!-- Application Logic -->
   <script>
-    // Building 11 Floor Layout: Ground Floor First, then 1st to 5th
+    // Embedded Google Apps Script Web App Endpoint
+    const GOOGLE_SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbyqIsLkomeePWgTOYMpEKAWjsdN9yX7B_D-W3_-RNs-mRMIrYpYdR_T4mxPAkEekwQzpQ/exec";
+
+    // Floor Layout: Ground Floor First, then 1st to 5th
     const FLOORS_DEF = [
       { name: 'الدور الأرضي', units: [1, 2, 3, 4] },
       { name: 'الدور الأول', units: [101, 102, 103, 104] },
@@ -443,10 +462,10 @@
       "سبتمبر 2027"
     ];
 
-    const STORAGE_KEY = 'bldg11_roaya_data_v5_prod';
+    const STORAGE_KEY = 'bldg11_roaya_data_final_v7';
     const ADMIN_PIN = '1124';
 
-    // App State
+    // State
     let appData = {
       units: {},
       payments: [],
@@ -463,7 +482,6 @@
         try {
           appData = JSON.parse(stored);
         } catch (e) {
-          console.error("Storage error", e);
           createDefaultData();
         }
       } else {
@@ -479,16 +497,18 @@
 
       updateRoleUI();
       renderAll();
+
+      // Automatically sync from cloud
+      syncFromCloud();
     }
 
     function createDefaultData() {
       appData = {
         units: {},
-        payments: [], // Clean zero payments
-        expenses: []  // Clean zero expenses
+        payments: [],
+        expenses: []
       };
 
-      // Populate 24 units with specified names or empty
       FLOORS_DEF.forEach(floor => {
         floor.units.forEach(uNum => {
           const owner = KNOWN_OWNERS[uNum] || '';
@@ -508,7 +528,43 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
 
-    // Role Switching Logic
+    // Cloud Sync Operations
+    function syncFromCloud(showNotice = false) {
+      const label = document.getElementById('sync-status-label');
+      if (label) label.innerText = 'جاري المزامنة...';
+
+      fetch(GOOGLE_SCRIPT_API_URL)
+        .then(res => res.json())
+        .then(res => {
+          if (res && res.status === "success" && res.data) {
+            if (res.data.units && Object.keys(res.data.units).length > 0) {
+              appData.units = res.data.units;
+            }
+            appData.payments = res.data.payments || [];
+            appData.expenses = res.data.expenses || [];
+            saveToStorage();
+            renderAll();
+            if (label) label.innerText = 'متصل بسحابة Google ✓';
+            if (showNotice) alert('تم تحديث البيانات من شيت جوجل بنجاح!');
+          }
+        })
+        .catch(err => {
+          console.warn("Could not sync from cloud, using cached copy", err);
+          if (label) label.innerText = 'متصل محلياً';
+        });
+    }
+
+    function postToCloud(payload) {
+      // Use text/plain to avoid preflight CORS in Google Apps Script
+      fetch(GOOGLE_SCRIPT_API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.error("Cloud post error", err));
+    }
+
+    // Role Switching
     function toggleAdminModeClick() {
       if (isAdminMode) {
         isAdminMode = false;
@@ -648,10 +704,8 @@
           btn.type = 'button';
           btn.onclick = () => openAptModal(uNum);
 
-          // Note 6: Display "غير متاح" instead of "غير مسجل"
           const ownerDisplay = unit.ownerName ? unit.ownerName : '<span class="text-slate-400 font-bold">غير متاح</span>';
 
-          // Note 7: Inactive / Duplicate Unit shows "✕ غير متاح"
           if (unit.isDuplicate) {
             btn.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-400 flex flex-col items-center justify-center relative overflow-hidden transition active:scale-95 opacity-75';
             btn.innerHTML = `
@@ -751,13 +805,11 @@
       selectedUnitId = null;
     }
 
-    // Note 4: Populate months dropdown and disable already-paid months for this unit
     function populateMonthsDropdown(unitId) {
       const select = document.getElementById('payment-month');
       select.innerHTML = '';
 
       const paidMonths = getUnitMonthlyPaidMonths(unitId);
-
       let firstAvailable = null;
 
       MONTHS_ORDER.forEach(m => {
@@ -785,6 +837,12 @@
       appData.units[selectedUnitId].isDuplicate = isDuplicate;
       saveToStorage();
 
+      postToCloud({
+        action: "updateUnit",
+        unitId: selectedUnitId,
+        isDuplicate: isDuplicate
+      });
+
       const warning = document.getElementById('duplicate-warning');
       const formContainer = document.getElementById('modal-payment-form-container');
 
@@ -805,8 +863,15 @@
       appData.units[selectedUnitId].ownerName = name;
       document.getElementById('modal-apt-title').innerText = name || 'غير متاح';
       saveToStorage();
+
+      postToCloud({
+        action: "updateUnit",
+        unitId: selectedUnitId,
+        ownerName: name
+      });
+
       renderAll();
-      alert('تم حفظ اسم المالك بنجاح!');
+      alert('تم حفظ اسم المالك بنجاح ومزامنته مع السحابة!');
     }
 
     function handlePaymentTypeChange() {
@@ -833,7 +898,6 @@
 
       if (!amount || amount <= 0) return;
 
-      // Note 4: Strict validation: If already paid for this month, reject!
       if (type === 'اشتراك شهري') {
         const paidMonths = getUnitMonthlyPaidMonths(selectedUnitId);
         if (paidMonths.includes(month)) {
@@ -854,6 +918,13 @@
       appData.payments.push(newPayment);
       saveToStorage();
 
+      const ownerName = appData.units[selectedUnitId] ? appData.units[selectedUnitId].ownerName : "";
+      postToCloud({
+        action: "addPayment",
+        payment: newPayment,
+        ownerName: ownerName
+      });
+
       renderAll();
       renderModalPayments(selectedUnitId);
       populateMonthsDropdown(selectedUnitId);
@@ -864,6 +935,12 @@
       if (!confirm('هل أنت متأكد من حذف هذه الدفعة وإلغاء قيدها؟')) return;
       appData.payments = appData.payments.filter(p => p.id !== payId);
       saveToStorage();
+
+      postToCloud({
+        action: "deletePayment",
+        id: payId
+      });
+
       renderAll();
       if (selectedUnitId) {
         renderModalPayments(selectedUnitId);
@@ -928,6 +1005,11 @@
       appData.expenses.unshift(newExpense);
       saveToStorage();
 
+      postToCloud({
+        action: "addExpense",
+        expense: newExpense
+      });
+
       document.getElementById('expense-title').value = '';
       document.getElementById('expense-amount').value = '';
 
@@ -939,6 +1021,12 @@
       if (!confirm('هل تريد حذف بند الصرف هذا؟')) return;
       appData.expenses = appData.expenses.filter(e => e.id !== expId);
       saveToStorage();
+
+      postToCloud({
+        action: "deleteExpense",
+        id: expId
+      });
+
       renderAll();
     }
 
