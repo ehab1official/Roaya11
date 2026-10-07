@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>عمارة 11 - رؤية سيتي | نظام المدفوعات والصيانة</title>
+  <title>عمارة 11 - رؤية سيتي | نظام مدفوعات الصيانة</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Cairo -->
@@ -30,44 +30,32 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen pb-24">
 
-  <!-- Header: Single Line Title -->
+  <!-- Header: Single Line Title & Subtitle + Cloud Badge directly under Admin button -->
   <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-lg sticky top-0 z-30">
-    <div class="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex justify-between items-center gap-2">
+    <div class="max-w-4xl mx-auto px-3 sm:px-4 py-2.5 flex justify-between items-center gap-2">
+      <!-- Left: Title & Subtitle in Single Line -->
       <div class="flex items-center gap-2 min-w-0">
-        <span class="text-xl sm:text-2xl shrink-0">🏢</span>
+        <span class="text-2xl sm:text-3xl shrink-0">🏢</span>
         <div class="min-w-0">
-          <h1 class="text-sm sm:text-lg font-black tracking-tight whitespace-nowrap truncate">عمارة 11 - رؤية سيتي</h1>
-          <div class="flex items-center gap-1.5">
-            <p class="text-[10px] sm:text-xs text-emerald-100 font-medium whitespace-nowrap truncate">نظام المدفوعات والخزينة والصيانة</p>
-            <span id="cloud-badge" class="text-[9px] bg-emerald-900/90 border border-emerald-300/40 text-emerald-200 px-1.5 py-0.2 rounded font-bold flex items-center gap-0.5">
-              <span>☁️</span>
-              <span id="sync-status-label">متصل بسحابة Google</span>
-            </span>
-          </div>
+          <h1 class="text-base sm:text-lg font-black tracking-tight whitespace-nowrap truncate">عمارة 11 - رؤية سيتي</h1>
+          <p class="text-[11px] sm:text-xs text-emerald-100 font-bold whitespace-nowrap truncate">نظام مدفوعات الصيانة</p>
         </div>
       </div>
 
-      <!-- Mode Switcher (Admin / Resident) -->
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button id="admin-mode-btn" onclick="toggleAdminModeClick()" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/60 hover:bg-slate-900 text-amber-300 whitespace-nowrap">
+      <!-- Right: Admin Button + Cloud Badge Directly Underneath -->
+      <div class="flex flex-col items-end gap-1 shrink-0">
+        <button id="admin-mode-btn" onclick="toggleAdminModeClick()" class="w-28 sm:w-32 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/70 hover:bg-slate-900 text-amber-300">
           <span id="admin-icon">🔒</span>
           <span id="admin-mode-label">دخول الأدمن</span>
         </button>
-        <button onclick="openDataModal()" title="إدارة النسخ الاحتياطي" class="bg-emerald-600/60 hover:bg-emerald-600 px-2 py-1.5 rounded-lg text-xs border border-white/10 transition">
-          💾
-        </button>
+        <!-- Cloud badge directly under Admin button with matching width & size -->
+        <div id="cloud-badge" class="w-28 sm:w-32 bg-emerald-950/80 border border-emerald-400/40 text-emerald-200 text-[10px] py-0.5 rounded flex items-center justify-center gap-1 font-bold shadow-sm">
+          <span class="animate-pulse">☁️</span>
+          <span id="sync-status-label" class="truncate">متصل بسحابة جوجل</span>
+        </div>
       </div>
     </div>
   </header>
-
-  <!-- Banner indicator of current role -->
-  <div id="role-banner" class="bg-blue-50 border-b border-blue-200 px-3 sm:px-4 py-2 text-xs flex justify-between items-center transition">
-    <div class="flex items-center gap-2 min-w-0">
-      <span id="role-status-dot" class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shrink-0"></span>
-      <span id="role-status-text" class="text-blue-900 font-bold truncate">أنت الآن في: وضع الساكن (عرض ومتابعة فقط)</span>
-    </div>
-    <span class="text-[11px] text-blue-700 font-medium hidden sm:inline shrink-0">اضغط على زر الأدمن بالأعلى للتحكم والإضافة</span>
-  </div>
 
   <!-- Top Metrics Overview (Clean) -->
   <main class="max-w-4xl mx-auto px-3 sm:px-4 pt-3.5">
@@ -117,7 +105,7 @@
       </div>
     </div>
 
-    <!-- Navigation Tabs (Renamed to: الشقق | المنصرف | كشف الحساب) -->
+    <!-- Navigation Tabs: الشقق | المنصرف | كشف الحساب -->
     <div class="flex bg-slate-200/90 p-1 rounded-xl mb-3 text-xs sm:text-sm font-bold">
       <button onclick="switchTab('apartments')" id="tab-btn-apartments" class="flex-1 py-2 rounded-lg transition text-slate-700 hover:text-slate-900">
         🏢 الشقق
@@ -208,18 +196,34 @@
 
     <!-- TAB 3: GENERAL LEDGER (كشف الحساب) -->
     <section id="tab-content-ledger" class="hidden">
-      <!-- WhatsApp Report Copy Button -->
-      <div class="bg-emerald-700 text-white p-3.5 rounded-xl mb-3.5 flex justify-between items-center shadow">
-        <div>
-          <h4 class="font-bold text-xs sm:text-sm">تقرير ملخص لواتساب العمارة</h4>
-          <p class="text-[11px] text-emerald-100">نسخ رسالة جاهزة وموثقة لمشاركتها مع الجيران</p>
+      <!-- Action Buttons Bar: WhatsApp Summary + Export Detailed Excel Report -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3.5">
+        <!-- WhatsApp Report Copy Button -->
+        <div class="bg-emerald-700 text-white p-3 rounded-xl flex justify-between items-center shadow">
+          <div>
+            <h4 class="font-bold text-xs sm:text-sm">تقرير واتساب العمارة</h4>
+            <p class="text-[10px] text-emerald-100">نسخ رسالة جاهزة بقائمة المسددين</p>
+          </div>
+          <button onclick="copyWhatsAppSummary()" class="bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm flex items-center gap-1 transition">
+            <span>📋</span>
+            <span>نسخ التقرير</span>
+          </button>
         </div>
-        <button onclick="copyWhatsAppSummary()" class="bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm flex items-center gap-1 transition">
-          <span>📋</span>
-          <span>نسخ التقرير</span>
-        </button>
+
+        <!-- Export Detailed Color-Formatted Excel Report Button -->
+        <div class="bg-slate-800 text-white p-3 rounded-xl flex justify-between items-center shadow">
+          <div>
+            <h4 class="font-bold text-xs sm:text-sm">تصدير ملف كشف الحساب</h4>
+            <p class="text-[10px] text-slate-300">تقرير إكسيل مفصل وبالألوان والتواريخ</p>
+          </div>
+          <button onclick="exportDetailedExcelReport()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 active:scale-95 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm flex items-center gap-1 transition">
+            <span>📊</span>
+            <span>تصدير ملف</span>
+          </button>
+        </div>
       </div>
 
+      <!-- Table Card: كشف الحساب -->
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
           <h3 class="font-black text-slate-700 text-xs sm:text-sm">كشف الحساب</h3>
@@ -230,10 +234,10 @@
             <thead class="bg-slate-100/90 text-slate-600 font-bold border-b border-slate-200">
               <tr>
                 <th class="p-2.5">الشقة</th>
-                <th class="p-2.5">الساكن / المالك</th>
+                <th class="p-2.5">المالك</th>
                 <th class="p-2.5">الحالة</th>
                 <th class="p-2.5">المسدد لـ أكتوبر</th>
-                <th class="p-2.5">الرصيد / الشهور المدفوعة</th>
+                <th class="p-2.5">الرصيد</th>
                 <th class="p-2.5">إجمالي المدفوع</th>
               </tr>
             </thead>
@@ -377,37 +381,31 @@
     </div>
   </div>
 
-  <!-- BACKUP & RESTORE MODAL -->
+  <!-- BACKUP & EXPORT MODAL -->
   <div id="data-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-3">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-4 space-y-3.5">
       <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-        <h3 class="font-black text-slate-800 text-sm">النسخ الاحتياطي والمزامنة</h3>
+        <h3 class="font-black text-slate-800 text-sm">إدارة البيانات وتصدير التقارير</h3>
         <button onclick="closeDataModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
       </div>
 
-      <!-- Sync Button -->
+      <!-- Sync Status -->
       <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex justify-between items-center">
         <div>
-          <span class="text-xs font-black text-emerald-950 block">حالة الاتصال السحابي:</span>
-          <span class="text-[11px] text-emerald-800 font-medium">مربوط بشيت جوجل تلقائياً</span>
+          <span class="text-xs font-black text-emerald-950 block">حالة المزامنة السحابية:</span>
+          <span class="text-[11px] text-emerald-800 font-bold">متصل تلقائياً مع Google Sheets</span>
         </div>
         <button onclick="syncFromCloud(true)" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
-          <span>🔄</span> <span>تحديث البيانات الآن</span>
+          <span>🔄</span> <span>تحديث الآن</span>
         </button>
       </div>
 
-      <p class="text-xs text-slate-600 leading-relaxed">
-        البيانات تُحفظ تلقائياً في السحابة على شيت جوجل. بالإضافة لذلك، يمكنك تنزيل نسخة احتياطية إضافية كملف (JSON) على جهازك:
-      </p>
-
-      <div class="flex gap-2">
-        <button onclick="exportDataJson()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-lg text-xs transition border border-slate-200">
-          📥 تصدير ملف (JSON)
+      <!-- Detailed Report Export Button -->
+      <div class="pt-1">
+        <button onclick="exportDetailedExcelReport(); closeDataModal();" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-black py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow">
+          <span>📊</span>
+          <span>تصدير كشف الحساب والتقرير المالي (Excel)</span>
         </button>
-        <button onclick="document.getElementById('import-file-input').click()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-lg text-xs transition border border-slate-200">
-          📤 استيراد ملف
-        </button>
-        <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importDataJson(event)">
       </div>
 
       <div class="border-t border-slate-100 pt-2">
@@ -462,7 +460,7 @@
       "سبتمبر 2027"
     ];
 
-    const STORAGE_KEY = 'bldg11_roaya_data_final_v7';
+    const STORAGE_KEY = 'bldg11_roaya_data_final_v8';
     const ADMIN_PIN = '1124';
 
     // State
@@ -544,7 +542,7 @@
             appData.expenses = res.data.expenses || [];
             saveToStorage();
             renderAll();
-            if (label) label.innerText = 'متصل بسحابة Google ✓';
+            if (label) label.innerText = 'متصل بسحابة جوجل';
             if (showNotice) alert('تم تحديث البيانات من شيت جوجل بنجاح!');
           }
         })
@@ -555,7 +553,6 @@
     }
 
     function postToCloud(payload) {
-      // Use text/plain to avoid preflight CORS in Google Apps Script
       fetch(GOOGLE_SCRIPT_API_URL, {
         method: "POST",
         mode: "no-cors",
@@ -598,34 +595,21 @@
       const btn = document.getElementById('admin-mode-btn');
       const icon = document.getElementById('admin-icon');
       const label = document.getElementById('admin-mode-label');
-      const banner = document.getElementById('role-banner');
-      const dot = document.getElementById('role-status-dot');
-      const text = document.getElementById('role-status-text');
 
       const adminExpenseCard = document.getElementById('admin-expense-form-card');
       const residentNotice = document.getElementById('resident-expense-notice');
 
       if (isAdminMode) {
-        btn.className = "flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black shadow transition bg-amber-400 hover:bg-amber-500 text-slate-950 whitespace-nowrap";
+        btn.className = "w-28 sm:w-32 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-black shadow transition bg-amber-400 hover:bg-amber-500 text-slate-950";
         icon.innerText = "🔓";
         label.innerText = "خروج من الأدمن";
-
-        banner.className = "bg-amber-50 border-b border-amber-200 px-3 sm:px-4 py-2 text-xs flex justify-between items-center transition";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0";
-        text.className = "text-amber-950 font-black truncate";
-        text.innerText = "أنت الآن في: وضع الأدمن الكامل (صلاحيات الإضافة والحذف والتعديل مفعلة)";
 
         if (adminExpenseCard) adminExpenseCard.classList.remove('hidden');
         if (residentNotice) residentNotice.classList.add('hidden');
       } else {
-        btn.className = "flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/60 hover:bg-slate-900 text-amber-300 whitespace-nowrap";
+        btn.className = "w-28 sm:w-32 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-black shadow transition border border-white/20 bg-slate-900/70 hover:bg-slate-900 text-amber-300";
         icon.innerText = "🔒";
         label.innerText = "دخول الأدمن";
-
-        banner.className = "bg-blue-50 border-b border-blue-200 px-3 sm:px-4 py-2 text-xs flex justify-between items-center transition";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shrink-0";
-        text.className = "text-blue-900 font-bold truncate";
-        text.innerText = "أنت الآن في: وضع الساكن (عرض ومتابعة فقط)";
 
         if (adminExpenseCard) adminExpenseCard.classList.add('hidden');
         if (residentNotice) residentNotice.classList.remove('hidden');
@@ -704,13 +688,16 @@
           btn.type = 'button';
           btn.onclick = () => openAptModal(uNum);
 
-          const ownerDisplay = unit.ownerName ? unit.ownerName : '<span class="text-slate-400 font-bold">غير متاح</span>';
+          // Note 1: Match Owner font size to apartment number (text-sm sm:text-base font-black)
+          const ownerDisplay = unit.ownerName 
+            ? `<span class="text-sm sm:text-base font-black text-slate-800">${unit.ownerName}</span>` 
+            : `<span class="text-sm sm:text-base font-bold text-slate-400">غير متاح</span>`;
 
           if (unit.isDuplicate) {
             btn.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-400 flex flex-col items-center justify-center relative overflow-hidden transition active:scale-95 opacity-75';
             btn.innerHTML = `
-              <span class="text-xs font-black text-slate-500">شقة ${uNum}</span>
-              <span class="text-[10px] text-slate-400 truncate max-w-full">${unit.ownerName || 'غير متاح'}</span>
+              <span class="text-sm sm:text-base font-black text-slate-500">شقة ${uNum}</span>
+              <div class="w-full text-center py-0.5 truncate max-w-full">${ownerDisplay}</div>
               <div class="mt-1 px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-black text-[11px] flex items-center gap-0.5">
                 <span>✕</span> <span>غير متاح</span>
               </div>
@@ -734,14 +721,14 @@
 
             btn.className = 'p-2.5 rounded-xl border border-emerald-200/90 bg-white hover:border-emerald-500 shadow-sm flex flex-col items-center justify-between text-right transition active:scale-95 group';
             btn.innerHTML = `
-              <div class="w-full flex justify-between items-center mb-1">
-                <span class="text-sm font-black text-emerald-800 group-hover:text-emerald-600">شقة ${uNum}</span>
-                <span class="text-[10px] text-slate-400 font-bold">${totalPaid} ج</span>
+              <div class="w-full flex justify-between items-center mb-0.5">
+                <span class="text-sm sm:text-base font-black text-emerald-800 group-hover:text-emerald-600">شقة ${uNum}</span>
+                <span class="text-[10px] sm:text-xs text-slate-500 font-bold">${totalPaid} ج</span>
               </div>
-              <div class="w-full text-center py-0.5">
-                <div class="text-[11px] font-bold text-slate-700 truncate">${ownerDisplay}</div>
+              <div class="w-full text-center py-1 truncate">
+                ${ownerDisplay}
               </div>
-              <div class="w-full text-center mt-1">
+              <div class="w-full text-center mt-0.5">
                 ${statusBadge}
               </div>
             `;
@@ -767,7 +754,6 @@
       document.getElementById('modal-owner-name').value = unit.ownerName || '';
       document.getElementById('modal-is-duplicate').checked = !!unit.isDuplicate;
 
-      // Adjust based on admin role
       const adminSettings = document.getElementById('modal-admin-settings');
       const paymentFormContainer = document.getElementById('modal-payment-form-container');
       const colDeleteHeader = document.getElementById('col-delete-header');
@@ -786,7 +772,6 @@
         colDeleteHeader.classList.add('hidden');
       }
 
-      // Check inactive warning
       const duplicateWarning = document.getElementById('duplicate-warning');
       if (unit.isDuplicate) {
         duplicateWarning.classList.remove('hidden');
@@ -1063,7 +1048,7 @@
       });
     }
 
-    // LEDGER TABLE (كشف الحساب)
+    // LEDGER TABLE (كشف الحساب - الشقة | المالك | الحالة | المسدد لـ أكتوبر | الرصيد | إجمالي المدفوع)
     function renderLedgerTable() {
       const tbody = document.getElementById('ledger-table-body');
       tbody.innerHTML = '';
@@ -1100,16 +1085,23 @@
             ? `<span class="text-emerald-700 font-black">مسدد ✓</span>`
             : `<span class="text-amber-700 font-black">مطلوب 200 ج</span>`;
 
-          let monthsSummary = paidMonths.length > 0 
-            ? paidMonths.join(', ')
-            : 'لا توجد دفعات';
+          // Note 5: Column 5 is "الرصيد"
+          let balanceDisplay = '';
+          if (isOctPaid) {
+            const extra = paidMonths.length - 1;
+            balanceDisplay = extra > 0 
+              ? `<span class="text-emerald-700 font-black">+${extra * 200} ج (رصيد مقدم)</span>` 
+              : `<span class="text-emerald-600 font-bold">0 ج (مسدد)</span>`;
+          } else {
+            balanceDisplay = `<span class="text-rose-600 font-black">-200 ج (مستحق)</span>`;
+          }
 
           tr.innerHTML = `
             <td class="p-2.5 font-black text-emerald-800">شقة ${uNum}</td>
             <td class="p-2.5 font-bold text-slate-700">${ownerDisplay}</td>
             <td class="p-2.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-1.5 py-0.5 rounded">نشطة</span></td>
             <td class="p-2.5">${octBadge}</td>
-            <td class="p-2.5 text-slate-600 text-[11px] max-w-xs truncate" title="${monthsSummary}">${monthsSummary}</td>
+            <td class="p-2.5 text-xs">${balanceDisplay}</td>
             <td class="p-2.5 font-black text-slate-900">${totalPaid.toLocaleString('ar-EG')} ج</td>
           `;
         }
@@ -1135,7 +1127,7 @@
       });
     }
 
-    // WHATSAPP REPORT GENERATOR
+    // Note 6: WhatsApp Report with specific Title and Payer List (Apartment + Owner + Amount)
     function copyWhatsAppSummary() {
       const totalIn = getTotalCollections();
       const totalOut = getTotalExpenses();
@@ -1144,19 +1136,30 @@
       const activeUnits = Object.values(appData.units).filter(u => !u.isDuplicate);
       const paidOctUnits = activeUnits.filter(u => getUnitMonthlyPaidMonths(u.id).includes('أكتوبر 2026'));
 
-      let text = `📢 *تقرير مالية وصيانة عمارة 11 - رؤية سيتي*\n`;
+      let text = `📢 *تقرير مدفوعات صيانة عمارة 11 - رؤية سيتي*\n`;
       text += `📅 الرصد: شهر أكتوبر 2026\n`;
       text += `------------------------------------\n`;
-      text += `💰 *رصيد الصندوق:* ${net.toLocaleString('ar-EG')} ج.م\n`;
+      text += `💰 *رصيد الصندوق المتاح:* ${net.toLocaleString('ar-EG')} ج.م\n`;
       text += `📥 *المحصل:* ${totalIn.toLocaleString('ar-EG')} ج.م\n`;
-      text += `📤 *المنصرف:* ${totalOut.toLocaleString('ar-EG')} ج.م\n`;
-      text += `🏢 *المسددين لشهر أكتوبر:* (${paidOctUnits.length} من أصل ${activeUnits.length} شقة نشطة)\n\n`;
+      text += `📤 *المنصرف:* ${totalOut.toLocaleString('ar-EG')} ج.م\n\n`;
 
-      text += `💸 *أبرز المصروفات:*\n`;
-      if (appData.expenses.length === 0) {
-        text += `- لا توجد مصروفات مسجلة بعد.\n`;
+      text += `🏢 *المسددين لشهر أكتوبر (${paidOctUnits.length} من أصل ${activeUnits.length} شقة نشطة):*\n`;
+      if (paidOctUnits.length === 0) {
+        text += `• لا يوجد مسددين حتى الآن.\n`;
       } else {
-        appData.expenses.slice(0, 5).forEach(e => {
+        paidOctUnits.forEach(u => {
+          const octPayment = appData.payments.find(p => p.unitId == u.id && p.month === 'أكتوبر 2026');
+          const amt = octPayment ? octPayment.amount : 200;
+          const owner = u.ownerName ? u.ownerName : 'غير متاح';
+          text += `• شقة ${u.id} - ${owner}: ${amt} ج.م\n`;
+        });
+      }
+
+      text += `\n💸 *أبرز المصروفات:*\n`;
+      if (appData.expenses.length === 0) {
+        text += `• لا توجد مصروفات مسجلة بعد.\n`;
+      } else {
+        appData.expenses.slice(0, 10).forEach(e => {
           text += `• ${e.title}: ${e.amount} ج.م (${e.date})\n`;
         });
       }
@@ -1171,53 +1174,183 @@
       });
     }
 
-    // BACKUP & RESTORE
-    function openDataModal() {
-      document.getElementById('data-modal').classList.remove('hidden');
-    }
-    function closeDataModal() {
-      document.getElementById('data-modal').classList.add('hidden');
-    }
+    // Note 4: Export Beautiful Detailed Color-Formatted Excel (.xls) Report
+    function exportDetailedExcelReport() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const totalIn = getTotalCollections();
+      const totalOut = getTotalExpenses();
+      const net = totalIn - totalOut;
+      const octCollections = getOctoberCollections();
 
-    function exportDataJson() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      // Collect all units in order
+      const allUnitIds = [];
+      FLOORS_DEF.forEach(f => f.units.forEach(u => allUnitIds.push(u)));
+
+      let html = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; direction: rtl; text-align: right; }
+            table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: right; }
+            .header-main { background-color: #065f46; color: #ffffff; font-size: 16px; font-weight: bold; text-align: center; }
+            .header-sec { background-color: #047857; color: #ffffff; font-weight: bold; }
+            .kpi-title { background-color: #f1f5f9; font-weight: bold; color: #334155; }
+            .kpi-val { font-weight: bold; color: #0f172a; }
+            .badge-paid { background-color: #d1fae5; color: #065f46; font-weight: bold; text-align: center; }
+            .badge-unpaid { background-color: #fef3c7; color: #92400e; font-weight: bold; text-align: center; }
+            .badge-dup { background-color: #f1f5f9; color: #64748b; font-weight: bold; text-align: center; }
+            .zebra { background-color: #f8fafc; }
+          </style>
+        </head>
+        <body>
+          <!-- Main Title -->
+          <table>
+            <tr>
+              <th colspan="6" class="header-main" style="padding: 14px;">
+                تقرير مدفوعات صيانة عمارة 11 - رؤية سيتي
+                <br>
+                <span style="font-size: 12px; font-weight: normal; color: #a7f3d0;">تاريخ استخراج التقرير: ${todayStr}</span>
+              </th>
+            </tr>
+          </table>
+
+          <!-- Treasury Summary Box -->
+          <table>
+            <tr class="header-sec">
+              <th colspan="4" style="background-color: #1e293b;">📊 ملخص الخزينة والصندوق المتاح</th>
+            </tr>
+            <tr>
+              <td class="kpi-title">رصيد الصندوق المتاح:</td>
+              <td class="kpi-val" style="color: #059669; font-size: 14px;">${net.toLocaleString('ar-EG')} ج.م</td>
+              <td class="kpi-title">إجمالي المحصل:</td>
+              <td class="kpi-val" style="color: #2563eb;">${totalIn.toLocaleString('ar-EG')} ج.م</td>
+            </tr>
+            <tr>
+              <td class="kpi-title">إجمالي المنصرف:</td>
+              <td class="kpi-val" style="color: #e11d48;">${totalOut.toLocaleString('ar-EG')} ج.م</td>
+              <td class="kpi-title">تحصيلات شهر أكتوبر 2026:</td>
+              <td class="kpi-val" style="color: #047857;">${octCollections.toLocaleString('ar-EG')} ج.م</td>
+            </tr>
+          </table>
+
+          <!-- Apartments Ledger Table -->
+          <table>
+            <tr class="header-sec">
+              <th colspan="6">🏢 كشف حساب وموقف شقق العمارة (24 شقة)</th>
+            </tr>
+            <tr style="background-color: #e2e8f0; font-weight: bold; color: #1e293b;">
+              <th>رقم الشقة</th>
+              <th>المالك</th>
+              <th>الدور</th>
+              <th>موقف شهر أكتوبر</th>
+              <th>الرصيد الحالي</th>
+              <th>إجمالي المدفوع حتى تاريخه</th>
+            </tr>
+      `;
+
+      allUnitIds.forEach((uNum, idx) => {
+        const unit = appData.units[uNum] || { id: uNum, ownerName: '', floorName: '', isDuplicate: false };
+        const isZebra = idx % 2 === 1 ? 'class="zebra"' : '';
+
+        if (unit.isDuplicate) {
+          html += `
+            <tr ${isZebra}>
+              <td style="font-weight: bold;">شقة ${uNum}</td>
+              <td>${unit.ownerName || 'غير متاح'}</td>
+              <td>${unit.floorName}</td>
+              <td class="badge-dup">غير متاح (شقة معفاة)</td>
+              <td>0 ج.م</td>
+              <td style="font-weight: bold;">0 ج.م</td>
+            </tr>
+          `;
+        } else {
+          const paidMonths = getUnitMonthlyPaidMonths(uNum);
+          const isOctPaid = paidMonths.includes('أكتوبر 2026');
+          const totalPaid = getUnitTotalPaid(uNum);
+
+          let octBadge = isOctPaid 
+            ? `<td class="badge-paid">مسدد ✓</td>` 
+            : `<td class="badge-unpaid">مطلوب 200 ج.م</td>`;
+
+          let bal = isOctPaid 
+            ? (paidMonths.length - 1 > 0 ? `+${(paidMonths.length - 1) * 200} ج.م (مقدم)` : `0 ج.م (مسدد)`)
+            : `-200 ج.م (مستحق)`;
+
+          html += `
+            <tr ${isZebra}>
+              <td style="font-weight: bold; color: #047857;">شقة ${uNum}</td>
+              <td style="font-weight: bold;">${unit.ownerName || 'غير متاح'}</td>
+              <td>${unit.floorName}</td>
+              ${octBadge}
+              <td>${bal}</td>
+              <td style="font-weight: bold;">${totalPaid.toLocaleString('ar-EG')} ج.م</td>
+            </tr>
+          `;
+        }
+      });
+
+      html += `
+          </table>
+
+          <!-- Expenses Table -->
+          <table>
+            <tr class="header-sec" style="background-color: #be123c;">
+              <th colspan="4">💸 كشف أوجه الصرف والمصروفات حتى تاريخه</th>
+            </tr>
+            <tr style="background-color: #ffe4e6; font-weight: bold; color: #881337;">
+              <th style="width: 10%;">م</th>
+              <th style="width: 50%;">بند الصرف</th>
+              <th style="width: 20%;">المبلغ</th>
+              <th style="width: 20%;">تاريخ الصرف</th>
+            </tr>
+      `;
+
+      if (appData.expenses.length === 0) {
+        html += `<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 12px;">لا توجد أي مصروفات مسجلة حتى تاريخه.</td></tr>`;
+      } else {
+        appData.expenses.forEach((e, i) => {
+          const isZebra = i % 2 === 1 ? 'class="zebra"' : '';
+          html += `
+            <tr ${isZebra}>
+              <td style="text-align: center;">${i + 1}</td>
+              <td style="font-weight: bold;">${e.title}</td>
+              <td style="color: #be123c; font-weight: bold;">-${Number(e.amount).toLocaleString('ar-EG')} ج.م</td>
+              <td>${e.date}</td>
+            </tr>
+          `;
+        });
+      }
+
+      html += `
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
       const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `Building_11_Data_${new Date().toISOString().split('T')[0]}.json`);
+      downloadAnchor.href = URL.createObjectURL(blob);
+      downloadAnchor.download = `تقرير_مدفوعات_صيانة_عمارة_11_${todayStr}.xls`;
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
     }
 
-    function importDataJson(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (parsed && parsed.units) {
-            appData = parsed;
-            saveToStorage();
-            renderAll();
-            closeDataModal();
-            alert('تم استيراد البيانات بنجاح!');
-          } else {
-            alert('الملف غير صالح أو لا يحتوي على بنية بيانات العمارة.');
-          }
-        } catch (err) {
-          alert('خطأ في قراءة ملف JSON.');
-        }
-      };
-      reader.readAsText(file);
-    }
-
+    // Reset Data
     function resetToInitialData() {
-      if (!confirm('هل تريد تصفير كل شيء والبدء برصيد صفر؟')) return;
+      if (!confirm('هل تريد تصفير الحسابات والبدء من جديد؟')) return;
       createDefaultData();
       renderAll();
       closeDataModal();
+    }
+
+    function openDataModal() {
+      document.getElementById('data-modal').classList.remove('hidden');
+    }
+    function closeDataModal() {
+      document.getElementById('data-modal').classList.add('hidden');
     }
 
     // On Load
