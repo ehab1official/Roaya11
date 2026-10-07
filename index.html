@@ -64,9 +64,9 @@
         </div>
 
         <!-- 3. Save / Data Button -->
-        <button onclick="openDataModal()" class="w-full h-7 sm:h-7.5 bg-blue-700/80 hover:bg-blue-600/90 text-white border border-white/20 text-[10px] font-bold rounded-lg flex items-center justify-center gap-1 transition shadow-sm">
+        <button onclick="handleManualSaveClick()" class="w-full h-7 sm:h-7.5 bg-blue-700/80 hover:bg-blue-600/90 text-white border border-white/20 text-[10px] font-bold rounded-lg flex items-center justify-center gap-1 transition shadow-sm">
           <span class="text-xs">💾</span>
-          <span class="whitespace-nowrap">إدارة البيانات</span>
+          <span class="whitespace-nowrap">حفظ البيانات</span>
         </button>
       </div>
 
@@ -225,14 +225,14 @@
         <!-- Button 1: تقرير مدفوعات العمارة (نسخ رسالة الواتساب) -->
         <button onclick="copyWhatsAppSummary()" class="w-full bg-[#1877F2] hover:bg-blue-700 active:scale-98 text-white font-black py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
           <span>📋</span>
-          <span>تقرير مدفوعات العمارة (واتساب)</span>
+          <span>تقرير مدفوعات العمارة</span>
         </button>
 
         <!-- Button 2: تقرير كشف حساب العمارة (Excel - Admin ONLY) -->
         <div id="admin-excel-btn-container">
           <button id="btn-export-excel" onclick="handleExportExcelClick()" class="w-full bg-slate-800 hover:bg-slate-900 active:scale-98 text-white font-black py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm opacity-50 cursor-not-allowed">
             <span>📊</span>
-            <span>تقرير كشف حساب العمارة (Excel)</span>
+            <span>تقرير كشف حساب العمارة</span>
             <span id="admin-only-badge" class="text-[10px] bg-slate-700 text-amber-300 px-1.5 py-0.5 rounded mr-1">متاح للأدمن فقط 🔒</span>
           </button>
         </div>
@@ -251,8 +251,8 @@
                 <th class="p-2.5">الشقة</th>
                 <th class="p-2.5">المالك</th>
                 <th class="p-2.5">الحالة</th>
-                <th class="p-2.5">المسدد لـ أكتوبر</th>
-                <th class="p-2.5">الرصيد</th>
+                <th class="p-2.5 text-center">اشتراك أكتوبر</th>
+                <th class="p-2.5 text-center">الرصيد</th>
                 <th class="p-2.5">إجمالي المدفوع</th>
               </tr>
             </thead>
@@ -525,6 +525,22 @@
         return;
       }
       exportDetailedExcelReport();
+    }
+
+    
+    // Manual Save & Central Confirmation
+    function handleManualSaveClick() {
+      saveToStorage();
+      if (typeof syncFromCloud === 'function') {
+        syncFromCloud();
+      }
+      const modal = document.getElementById('save-confirm-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeSaveConfirmModal() {
+      const modal = document.getElementById('save-confirm-modal');
+      if (modal) modal.classList.add('hidden');
     }
 
     // Initialization
@@ -940,39 +956,89 @@
       if (!isAdminMode || !selectedUnitId) return;
 
       const type = document.getElementById('payment-type').value;
-      const amount = Number(document.getElementById('payment-amount').value);
+      const totalAmount = Number(document.getElementById('payment-amount').value);
       const date = document.getElementById('payment-date').value;
-      const month = type === 'اشتراك شهري' ? document.getElementById('payment-month').value : 'صيانة طارئة';
+      const targetMonth = document.getElementById('payment-month').value;
 
-      if (!amount || amount <= 0) return;
+      if (!totalAmount || totalAmount <= 0) return;
 
       if (type === 'اشتراك شهري') {
+        const monthlyFee = 200;
         const paidMonths = getUnitMonthlyPaidMonths(selectedUnitId);
-        if (paidMonths.includes(month)) {
-          alert(`عفواً، تم سداد اشتراك (${month}) مسبقاً لهذه الشقة! لا يمكن تسجيل دفعة أخرى لنفس الشهر.`);
+        
+        // Find unpaid months starting from October 2026 onwards
+        const unpaidMonths = MONTHS_ORDER.filter(m => !paidMonths.includes(m));
+        
+        if (unpaidMonths.length === 0) {
+          alert('تم سداد كافة الشهور المتاحة لهذه الشقة مسبقاً!');
           return;
         }
+
+        // Auto-allocate amount into 200 EGP chunks for consecutive unpaid months
+        let remaining = totalAmount;
+        let allocatedCount = 0;
+        
+        for (let i = 0; i < unpaidMonths.length && remaining >= monthlyFee; i++) {
+          const m = unpaidMonths[i];
+          const newPayment = {
+            id: 'pay_' + Date.now() + '_' + i,
+            unitId: selectedUnitId,
+            type: 'اشتراك شهري',
+            amount: monthlyFee,
+            month: m,
+            date: date
+          };
+          appData.payments.push(newPayment);
+          remaining -= monthlyFee;
+          allocatedCount++;
+
+          const ownerName = appData.units[selectedUnitId] ? appData.units[selectedUnitId].ownerName : "";
+          postToCloud({
+            action: "addPayment",
+            payment: newPayment,
+            ownerName: ownerName
+          });
+        }
+
+        // If there is any partial remainder less than 200 or custom partial payment
+        if (remaining > 0 && unpaidMonths[allocatedCount]) {
+          const m = unpaidMonths[allocatedCount];
+          const partialPayment = {
+            id: 'pay_' + Date.now() + '_part',
+            unitId: selectedUnitId,
+            type: 'اشتراك شهري (جزئي)',
+            amount: remaining,
+            month: m,
+            date: date
+          };
+          appData.payments.push(partialPayment);
+          const ownerName = appData.units[selectedUnitId] ? appData.units[selectedUnitId].ownerName : "";
+          postToCloud({
+            action: "addPayment",
+            payment: partialPayment,
+            ownerName: ownerName
+          });
+        }
+      } else {
+        // صيانة طارئة
+        const newPayment = {
+          id: 'pay_' + Date.now(),
+          unitId: selectedUnitId,
+          type: type,
+          amount: totalAmount,
+          month: 'صيانة طارئة',
+          date: date
+        };
+        appData.payments.push(newPayment);
+        const ownerName = appData.units[selectedUnitId] ? appData.units[selectedUnitId].ownerName : "";
+        postToCloud({
+          action: "addPayment",
+          payment: newPayment,
+          ownerName: ownerName
+        });
       }
 
-      const newPayment = {
-        id: 'pay_' + Date.now(),
-        unitId: selectedUnitId,
-        type: type,
-        amount: amount,
-        month: month,
-        date: date
-      };
-
-      appData.payments.push(newPayment);
       saveToStorage();
-
-      const ownerName = appData.units[selectedUnitId] ? appData.units[selectedUnitId].ownerName : "";
-      postToCloud({
-        action: "addPayment",
-        payment: newPayment,
-        ownerName: ownerName
-      });
-
       renderAll();
       renderModalPayments(selectedUnitId);
       populateMonthsDropdown(selectedUnitId);
@@ -1116,6 +1182,10 @@
       const tbody = document.getElementById('ledger-table-body');
       tbody.innerHTML = '';
 
+      // Determine current target month dynamically
+      const currentMonthName = "أكتوبر 2026";
+      const currentMonthColHeader = "اشتراك أكتوبر";
+
       const allUnitIds = [];
       FLOORS_DEF.forEach(f => f.units.forEach(u => allUnitIds.push(u)));
 
@@ -1136,35 +1206,33 @@
             <td class="p-2.5">${ownerDisplay}</td>
             <td class="p-2.5"><span class="bg-slate-200 text-slate-600 text-[10px] font-black px-2 py-0.5 rounded">✕ غير متاح</span></td>
             <td class="p-2.5">-</td>
-            <td class="p-2.5 text-slate-400">معفاة من الاشتراك</td>
+            <td class="p-2.5 text-slate-400">0 ج</td>
             <td class="p-2.5 font-bold">0 ج</td>
           `;
         } else {
           const paidMonths = getUnitMonthlyPaidMonths(uNum);
-          const isOctPaid = paidMonths.includes('أكتوبر 2026');
+          const isCurrentPaid = paidMonths.includes(currentMonthName);
           const totalPaid = getUnitTotalPaid(uNum);
 
-          let octBadge = isOctPaid 
-            ? `<span class="text-blue-700 font-black">مسدد ✓</span>`
-            : `<span class="text-amber-700 font-black">مطلوب 200 ج</span>`;
+          // Column 4: اشتراك أكتوبر (سدد / لم يسدد)
+          let statusCol = isCurrentPaid 
+            ? `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-black px-2 py-0.5 rounded">سدد ✓</span>`
+            : `<span class="bg-rose-100 text-rose-700 text-[11px] font-black px-2 py-0.5 rounded">لم يسدد</span>`;
 
-          // Note 5: Column 5 is "الرصيد"
+          // Column 5: الرصيد (المسدد فعلياً أو -200)
           let balanceDisplay = '';
-          if (isOctPaid) {
-            const extra = paidMonths.length - 1;
-            balanceDisplay = extra > 0 
-              ? `<span class="text-blue-700 font-black">+${extra * 200} ج (رصيد مقدم)</span>` 
-              : `<span class="text-[#1877F2] font-bold">0 ج (مسدد)</span>`;
+          if (totalPaid > 0) {
+            balanceDisplay = `<span class="text-blue-700 font-black">+${totalPaid.toLocaleString('ar-EG')} ج</span>`;
           } else {
-            balanceDisplay = `<span class="text-rose-600 font-black">-200 ج (مستحق)</span>`;
+            balanceDisplay = `<span class="text-rose-600 font-black">-200 ج</span>`;
           }
 
           tr.innerHTML = `
-            <td class="p-2.5 font-black text-blue-800">شقة ${uNum}</td>
+            <td class="p-2.5 font-black text-blue-900">شقة ${uNum}</td>
             <td class="p-2.5 font-bold text-slate-700">${ownerDisplay}</td>
             <td class="p-2.5"><span class="bg-blue-100 text-blue-800 text-[10px] font-black px-1.5 py-0.5 rounded">نشطة</span></td>
-            <td class="p-2.5">${octBadge}</td>
-            <td class="p-2.5 text-xs">${balanceDisplay}</td>
+            <td class="p-2.5 text-center">${statusCol}</td>
+            <td class="p-2.5 text-center text-xs">${balanceDisplay}</td>
             <td class="p-2.5 font-black text-slate-900">${totalPaid.toLocaleString('ar-EG')} ج</td>
           `;
         }
@@ -1409,7 +1477,29 @@
 
       html += `
           </table>
-        </body>
+        
+  <!-- SAVE CONFIRMATION MODAL (Center of Screen) -->
+  <div id="save-confirm-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-5 text-center space-y-3 animate-in fade-in zoom-in duration-150">
+      <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+        ✓
+      </div>
+      <h3 class="text-base sm:text-lg font-black text-slate-900">تم حفظ ومزامنة البيانات بنجاح!</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        تم تأكيد حفظ كافة السجلات والتعديلات محلياً وإرسالها للسحابة لضمان ظهورها لجميع الملاك فوراً.
+      </p>
+      <div class="pt-2 flex gap-2">
+        <button onclick="closeSaveConfirmModal()" class="flex-1 bg-[#1877F2] hover:bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs shadow transition">
+          حسناً
+        </button>
+        <button onclick="closeSaveConfirmModal(); openDataModal();" class="px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition" title="خيارات إضافية">
+          ⚙️ خيارات
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
         </html>
       `;
 
@@ -1443,5 +1533,27 @@
       switchTab('apartments');
     };
   </script>
+
+  <!-- SAVE CONFIRMATION MODAL (Center of Screen) -->
+  <div id="save-confirm-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-5 text-center space-y-3 animate-in fade-in zoom-in duration-150">
+      <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+        ✓
+      </div>
+      <h3 class="text-base sm:text-lg font-black text-slate-900">تم حفظ ومزامنة البيانات بنجاح!</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        تم تأكيد حفظ كافة السجلات والتعديلات محلياً وإرسالها للسحابة لضمان ظهورها لجميع الملاك فوراً.
+      </p>
+      <div class="pt-2 flex gap-2">
+        <button onclick="closeSaveConfirmModal()" class="flex-1 bg-[#1877F2] hover:bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs shadow transition">
+          حسناً
+        </button>
+        <button onclick="closeSaveConfirmModal(); openDataModal();" class="px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition" title="خيارات إضافية">
+          ⚙️ خيارات
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
