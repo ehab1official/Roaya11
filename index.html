@@ -729,6 +729,7 @@
       if (pDate) pDate.value = todayStr;
       if (eDate) eDate.value = todayStr;
 
+      checkAdminSession();
       updateRoleUI();
       renderAll();
 
@@ -770,29 +771,85 @@
     }
 
     // Cloud Sync Operations
+    // Robust Cloud Sync (Fetch with JSONP Fallback for 100% Mobile Reliability)
+    let syncTimeoutTimer = null;
+
     function syncFromCloud(showNotice = false) {
       const label = document.getElementById('sync-status-label');
-      if (label) label.innerText = 'جاري المزامنة...';
+      const dot = document.getElementById('cloud-dot');
+      if (label) label.innerText = 'مزامنة...';
 
+      let resolved = false;
+
+      // Global JSONP callback
+      window.onGoogleScriptJsonp = function(res) {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(syncTimeoutTimer);
+        handleSyncSuccess(res, showNotice, label, dot);
+      };
+
+      // 1. Try standard fetch with 4s timeout
       fetch(GOOGLE_SCRIPT_API_URL)
         .then(res => res.json())
         .then(res => {
-          if (res && res.status === "success" && res.data) {
-            if (res.data.units && Object.keys(res.data.units).length > 0) {
-              appData.units = res.data.units;
-            }
-            appData.payments = res.data.payments || [];
-            appData.expenses = res.data.expenses || [];
-            saveToStorage();
-            renderAll();
-            if (label) label.innerText = 'متصل'; if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
-            if (showNotice) alert('تم تحديث البيانات من شيت جوجل بنجاح!');
-          }
+          if (resolved) return;
+          resolved = true;
+          clearTimeout(syncTimeoutTimer);
+          handleSyncSuccess(res, showNotice, label, dot);
         })
         .catch(err => {
-          console.warn("Could not sync from cloud, using cached copy", err);
-          if (label) label.innerText = 'غير متصل'; if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-rose-400';
+          console.warn("Direct fetch failed, trying JSONP fallback...", err);
+          // Fallback to JSONP
+          tryJsonpFallback(label, dot, showNotice);
         });
+
+      // Safety timeout: if fetch hangs, trigger JSONP
+      syncTimeoutTimer = setTimeout(() => {
+        if (!resolved) {
+          tryJsonpFallback(label, dot, showNotice);
+        }
+      }, 3500);
+    }
+
+    function tryJsonpFallback(label, dot, showNotice) {
+      try {
+        const oldScript = document.getElementById('gscript_jsonp');
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement('script');
+        script.id = 'gscript_jsonp';
+        const sep = GOOGLE_SCRIPT_API_URL.includes('?') ? '&' : '?';
+        script.src = `${GOOGLE_SCRIPT_API_URL}${sep}callback=onGoogleScriptJsonp&_t=${Date.now()}`;
+        script.onerror = function() {
+          handleSyncFailure(label, dot);
+        };
+        document.body.appendChild(script);
+      } catch(e) {
+        handleSyncFailure(label, dot);
+      }
+    }
+
+    function handleSyncSuccess(res, showNotice, label, dot) {
+      if (res && res.status === "success" && res.data) {
+        if (res.data.units && Object.keys(res.data.units).length > 0) {
+          appData.units = res.data.units;
+        }
+        appData.payments = res.data.payments || [];
+        appData.expenses = res.data.expenses || [];
+        saveToStorage();
+        renderAll();
+        if (label) label.innerText = 'متصل';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        if (showNotice) alert('تم تحديث ومزامنة البيانات من شيت جوجل بنجاح!');
+      } else {
+        handleSyncFailure(label, dot);
+      }
+    }
+
+    function handleSyncFailure(label, dot) {
+      if (label) label.innerText = 'غير متصل';
+      if (dot) dot.className = 'w-2 h-2 rounded-full bg-rose-400';
     }
 
     function postToCloud(payload) {
@@ -804,12 +861,47 @@
       }).catch(err => console.error("Cloud post error", err));
     }
 
-    // Role Switching
+    // ==========================================
+    // ADMIN SESSION & PERSISTENCE (120s Inactivity / Manual Exit)
+    // ==========================================
+    const ADMIN_SESSION_KEY = 'bldg11_admin_session_time';
+    const INACTIVITY_TIMEOUT_MS = 120 * 1000; // 120 seconds
+    let adminInactivityTimer = null;
+
+    function checkAdminSession() {
+      const savedTime = localStorage.getItem(ADMIN_SESSION_KEY);
+      if (savedTime) {
+        const elapsed = Date.now() - Number(savedTime);
+        if (elapsed < INACTIVITY_TIMEOUT_MS) {
+          isAdminMode = true;
+          resetAdminTimer();
+        } else {
+          logoutAdminQuietly();
+        }
+      } else {
+        isAdminMode = false;
+      }
+    }
+
+    function resetAdminTimer() {
+      if (!isAdminMode) return;
+      localStorage.setItem(ADMIN_SESSION_KEY, Date.now());
+      clearTimeout(adminInactivityTimer);
+      adminInactivityTimer = setTimeout(() => {
+        if (isAdminMode) {
+          alert('تم انتهاء جلسة الأدمن تلقائياً لعدم النشاط لمدة 120 ثانية.');
+          logoutAdmin();
+        }
+      }, INACTIVITY_TIMEOUT_MS);
+    }
+
+    // Reset inactivity timer on user interactions
+    window.addEventListener('click', () => { if (isAdminMode) resetAdminTimer(); });
+    window.addEventListener('touchstart', () => { if (isAdminMode) resetAdminTimer(); });
+
     function toggleAdminModeClick() {
       if (isAdminMode) {
-        isAdminMode = false;
-        updateRoleUI();
-        renderAll();
+        logoutAdmin();
       } else {
         document.getElementById('pin-error').classList.add('hidden');
         document.getElementById('admin-pin-input').value = '';
@@ -817,14 +909,31 @@
       }
     }
 
+    function logoutAdmin() {
+      isAdminMode = false;
+      localStorage.removeItem(ADMIN_SESSION_KEY);
+      clearTimeout(adminInactivityTimer);
+      checkAdminSession();
+      updateRoleUI();
+      renderAll();
+    }
+
+    function logoutAdminQuietly() {
+      isAdminMode = false;
+      localStorage.removeItem(ADMIN_SESSION_KEY);
+      clearTimeout(adminInactivityTimer);
+    }
+
     function handleAdminLogin(e) {
       e.preventDefault();
       const entered = document.getElementById('admin-pin-input').value.trim();
       if (entered === ADMIN_PIN || entered === '1124') {
         isAdminMode = true;
+        resetAdminTimer();
         closePinModal();
-        updateRoleUI();
-        renderAll();
+        checkAdminSession();
+      updateRoleUI();
+      renderAll();
       } else {
         document.getElementById('pin-error').classList.remove('hidden');
       }
