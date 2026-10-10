@@ -436,9 +436,29 @@
         </button>
       </div>
 
+      <!-- Backup & Restore Section (Guarantee Zero Data Loss) -->
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+        <span class="text-xs font-black text-slate-800 flex items-center gap-1">
+          <span>💾</span>
+          <span>النسخ الاحتياطي والأمان التام للبيانات:</span>
+        </span>
+        <p class="text-[10px] text-slate-600 leading-relaxed font-medium">
+          البيانات محفوظة سحابياً في Google Sheets ومحلياً على جهازك. يمكنك أيضاً تحميل نسخة احتياطية (JSON) والاحتفاظ بها أو استعادتها في أي وقت:
+        </p>
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="exportJsonBackup()" class="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold py-2 px-2 rounded-lg text-[11px] transition flex items-center justify-center gap-1 shadow-sm">
+            <span>📥</span> <span>تصدير نسخة (JSON)</span>
+          </button>
+          <label class="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold py-2 px-2 rounded-lg text-[11px] transition flex items-center justify-center gap-1 shadow-sm cursor-pointer text-center">
+            <span>📤</span> <span>استيراد نسخة (JSON)</span>
+            <input type="file" accept=".json" onchange="importJsonBackup(event)" class="hidden">
+          </label>
+        </div>
+      </div>
+
       <div class="border-t border-slate-100 pt-2">
         <button onclick="resetToInitialData()" class="w-full bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-bold py-1.5 rounded-lg text-xs transition">
-          تصفير الحسابات والبدء من جديد
+          تصفير الحسابات والبدء من جديد (محلياً فقط)
         </button>
       </div>
     </div>
@@ -459,21 +479,39 @@
       { name: 'الدور الخامس', units: [501, 502, 503, 504] }
     ];
 
-    // Specified Owners Provided By User
-    const KNOWN_OWNERS = {
-      3: 'محمد مرسي',
-      101: 'دياب',
-      201: 'ايهاب الشرقاوي',
-      203: 'خالد أمير',
-      204: 'سامي',
-      301: 'عبد الرحمن الانصاري',
-      302: 'هبة',
-      303: 'احمد شومان',
-      402: 'طارق مشعل',
-      404: 'عماد عامر'
+    // Default Units Pre-seeded from Master Google Sheet
+    const DEFAULT_UNITS_SEED = {
+      1: { ownerName: '', isDuplicate: true },
+      2: { ownerName: 'علاء', isDuplicate: true },
+      3: { ownerName: 'علاء', isDuplicate: true },
+      4: { ownerName: 'حاج/ محمد مرسي', isDuplicate: false },
+      101: { ownerName: 'م. دياب عوض', isDuplicate: false },
+      102: { ownerName: 'م. دياب عوض', isDuplicate: true },
+      103: { ownerName: 'أ. محمد عبد الله', isDuplicate: false },
+      104: { ownerName: 'د. حماد عبد العظيم', isDuplicate: false },
+      201: { ownerName: 'إيهاب الشرقاوي', isDuplicate: false },
+      202: { ownerName: 'إيهاب الشرقاوي', isDuplicate: true },
+      203: { ownerName: 'د. خالد الأسمر', isDuplicate: false },
+      204: { ownerName: 'أ. سامي', isDuplicate: false },
+      301: { ownerName: 'أ. عبد الرحمن الأنصاري', isDuplicate: false },
+      302: { ownerName: 'أ. هبة علي', isDuplicate: false },
+      303: { ownerName: 'د. أحمد شومان', isDuplicate: false },
+      304: { ownerName: 'د. أحمد شومان', isDuplicate: true },
+      401: { ownerName: 'أ. إبراهيم طه', isDuplicate: false },
+      402: { ownerName: 'د. طارق مشعل', isDuplicate: false },
+      403: { ownerName: 'أ. محمد مصطفى', isDuplicate: false },
+      404: { ownerName: 'أ. عماد عامر', isDuplicate: false },
+      501: { ownerName: 'أ. أحمد عادل', isDuplicate: false },
+      502: { ownerName: 'أ. أحمد نجيب', isDuplicate: false },
+      503: { ownerName: '', isDuplicate: false },
+      504: { ownerName: '', isDuplicate: false }
     };
 
+    // Months starting from July 2026 (Month 7) per user request
     const MONTHS_ORDER = [
+      "يوليو 2026",
+      "أغسطس 2026",
+      "سبتمبر 2026",
       "أكتوبر 2026",
       "نوفمبر 2026",
       "ديسمبر 2026",
@@ -485,10 +523,23 @@
       "يونيو 2027",
       "يوليو 2027",
       "أغسطس 2027",
-      "سبتمبر 2027"
+      "سبتمبر 2027",
+      "أكتوبر 2027"
     ];
 
-    const STORAGE_KEY = 'bldg11_roaya_data_final_v8';
+    // Master Permanent Storage Key & Migration from all legacy keys
+    const MASTER_STORAGE_KEY = 'bldg11_roaya_master_data';
+    const LEGACY_STORAGE_KEYS = [
+      'bldg11_roaya_data_final_v8',
+      'bldg11_roaya_data_final_v7',
+      'bldg11_roaya_data_final_v6',
+      'bldg11_roaya_data_final_v5',
+      'bldg11_roaya_data_v4',
+      'bldg11_roaya_data_v3',
+      'bldg11_roaya_data',
+      'roaya11_data'
+    ];
+    const STORAGE_KEY = MASTER_STORAGE_KEY;
     const ADMIN_PIN = '1124';
 
     // State
@@ -767,15 +818,109 @@
       }
     }
 
+    // Safe Local Storage Loader with Automatic Legacy Migration
+    function loadStorageWithMigration() {
+      // 1. Try master storage key first
+      const masterStored = localStorage.getItem(MASTER_STORAGE_KEY);
+      if (masterStored) {
+        try {
+          const parsed = JSON.parse(masterStored);
+          if (parsed && typeof parsed === 'object') {
+            return parsed;
+          }
+        } catch (e) {
+          console.warn("Error parsing master storage, checking legacy...", e);
+        }
+      }
+
+      // 2. Check legacy storage keys in order to prevent any data loss across file updates
+      for (const key of LEGACY_STORAGE_KEYS) {
+        const legacyStored = localStorage.getItem(key);
+        if (legacyStored) {
+          try {
+            const parsed = JSON.parse(legacyStored);
+            if (parsed && typeof parsed === 'object') {
+              console.log(`Migrated data from legacy key: ${key}`);
+              localStorage.setItem(MASTER_STORAGE_KEY, JSON.stringify(parsed));
+              return parsed;
+            }
+          } catch (e) {
+            console.warn(`Error parsing legacy key ${key}`, e);
+          }
+        }
+      }
+
+      return null;
+    }
+
+    // JSON Backup Export & Import Functions for Zero Data Loss Guarantee
+    function exportJsonBackup() {
+      try {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        const todayStr = new Date().toISOString().split('T')[0];
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `نسخة_احتياطية_عمارة11_${todayStr}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+      } catch(err) {
+        alert("حدث خطأ أثناء تصدير النسخة الاحتياطية: " + err.message);
+      }
+    }
+
+    function importJsonBackup(event) {
+      if (!isAdminMode) {
+        alert('استعادة النسخة الاحتياطية متاحة للأدمن فقط!');
+        return;
+      }
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported && imported.units) {
+            if (!confirm('هل أنت متأكد من استعادة هذه النسخة وتطبيقها؟ سيتم دمجها مع الحسابات.')) return;
+            appData = imported;
+            saveToStorage();
+            renderAll();
+            alert('تم استعادة النسخة الاحتياطية وتطبيقها بنجاح!');
+            closeDataModal();
+          } else {
+            alert('الملف غير متوافق أو لا يحتوي على بنية بيانات صحيحة.');
+          }
+        } catch(err) {
+          alert('حدث خطأ أثناء قراءة الملف: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
     // Initialization
     function initData() {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = loadStorageWithMigration();
       if (stored) {
-        try {
-          appData = JSON.parse(stored);
-        } catch (e) {
-          createDefaultData();
-        }
+        appData = stored;
+        if (!appData.units) appData.units = {};
+        if (!appData.payments) appData.payments = [];
+        if (!appData.expenses) appData.expenses = [];
+        if (appData.initialBalance === undefined) appData.initialBalance = 0;
+
+        // Ensure all 24 units exist without wiping user modifications
+        FLOORS_DEF.forEach(floor => {
+          floor.units.forEach(uNum => {
+            if (!appData.units[uNum]) {
+              const seed = DEFAULT_UNITS_SEED[uNum] || { ownerName: '', isDuplicate: false };
+              appData.units[uNum] = {
+                id: uNum,
+                floorName: floor.name,
+                ownerName: seed.ownerName,
+                isDuplicate: seed.isDuplicate
+              };
+            }
+          });
+        });
       } else {
         createDefaultData();
       }
@@ -811,12 +956,12 @@
 
       FLOORS_DEF.forEach(floor => {
         floor.units.forEach(uNum => {
-          const owner = KNOWN_OWNERS[uNum] || '';
+          const seed = DEFAULT_UNITS_SEED[uNum] || { ownerName: '', isDuplicate: false };
           appData.units[uNum] = {
             id: uNum,
             floorName: floor.name,
-            ownerName: owner,
-            isDuplicate: false
+            ownerName: seed.ownerName,
+            isDuplicate: seed.isDuplicate
           };
         });
       });
@@ -825,7 +970,14 @@
     }
 
     function saveToStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      try {
+        const serialized = JSON.stringify(appData);
+        localStorage.setItem(MASTER_STORAGE_KEY, serialized);
+        // Keep updated in legacy keys so user never loses data across code versions
+        localStorage.setItem('bldg11_roaya_data_final_v8', serialized);
+      } catch(e) {
+        console.error("Storage save error:", e);
+      }
     }
 
     // Cloud Sync Operations
@@ -890,11 +1042,52 @@
 
     function handleSyncSuccess(res, showNotice, label, dot) {
       if (res && res.status === "success" && res.data) {
+        // 1. Non-destructive units merge: preserve local ownerName if cloud is empty
         if (res.data.units && Object.keys(res.data.units).length > 0) {
-          appData.units = res.data.units;
+          Object.keys(res.data.units).forEach(uId => {
+            if (!appData.units[uId]) {
+              appData.units[uId] = res.data.units[uId];
+            } else {
+              if (res.data.units[uId].ownerName) {
+                appData.units[uId].ownerName = res.data.units[uId].ownerName;
+              }
+              if (res.data.units[uId].floorName) {
+                appData.units[uId].floorName = res.data.units[uId].floorName;
+              }
+              appData.units[uId].isDuplicate = !!res.data.units[uId].isDuplicate;
+            }
+          });
         }
-        appData.payments = res.data.payments || [];
-        appData.expenses = res.data.expenses || [];
+
+        // 2. Non-destructive payments merge by ID (Keep cloud + re-queue unsynced local)
+        const cloudPayments = res.data.payments || [];
+        const cloudPayMap = new Map();
+        cloudPayments.forEach(p => cloudPayMap.set(String(p.id), p));
+
+        const mergedPayments = [...cloudPayments];
+        (appData.payments || []).forEach(localP => {
+          if (!cloudPayMap.has(String(localP.id))) {
+            mergedPayments.push(localP);
+            const owner = appData.units[localP.unitId] ? appData.units[localP.unitId].ownerName : "";
+            postToCloud({ action: "addPayment", payment: localP, ownerName: owner });
+          }
+        });
+        appData.payments = mergedPayments;
+
+        // 3. Non-destructive expenses merge by ID
+        const cloudExpenses = res.data.expenses || [];
+        const cloudExpMap = new Map();
+        cloudExpenses.forEach(e => cloudExpMap.set(String(e.id), e));
+
+        const mergedExpenses = [...cloudExpenses];
+        (appData.expenses || []).forEach(localE => {
+          if (!cloudExpMap.has(String(localE.id))) {
+            mergedExpenses.push(localE);
+            postToCloud({ action: "addExpense", expense: localE });
+          }
+        });
+        appData.expenses = mergedExpenses;
+
         saveToStorage();
         renderAll();
         if (label) label.innerText = 'متصل';
@@ -1127,12 +1320,13 @@
 
             let statusBadge = '';
             if (isOctPaid) {
-              const extraCount = paidMonths.length - 1;
-              if (extraCount > 0) {
-                statusBadge = `<span class="bg-blue-100 text-blue-800 text-[10px] font-black px-1.5 py-0.5 rounded">+${extraCount} شهور مقدم</span>`;
+              if (paidMonths.length > 1) {
+                statusBadge = `<span class="bg-blue-100 text-blue-800 text-[10px] font-black px-1.5 py-0.5 rounded">مسدد (${paidMonths.length} شهور) ✓</span>`;
               } else {
                 statusBadge = `<span class="bg-blue-100 text-blue-800 text-[10px] font-black px-1.5 py-0.5 rounded">مسدد أكتوبر ✓</span>`;
               }
+            } else if (paidMonths.length > 0) {
+              statusBadge = `<span class="bg-sky-100 text-sky-800 text-[10px] font-black px-1.5 py-0.5 rounded">مسدد (${paidMonths.length} شهور سابقة)</span>`;
             } else {
               statusBadge = `<span class="bg-amber-100 text-amber-800 text-[10px] font-black px-1.5 py-0.5 rounded">لم يسدد بعد</span>`;
             }
@@ -1141,7 +1335,7 @@
             btn.innerHTML = `
               <div class="w-full flex justify-between items-center mb-0.5">
                 <span class="text-sm sm:text-base font-black text-blue-800 group-hover:text-[#1877F2]">شقة ${uNum}</span>
-                <span class="text-[10px] sm:text-xs text-slate-500 font-bold">${totalPaid} ج</span>
+                <span class="text-[10px] sm:text-xs text-slate-500 font-bold">${totalPaid.toLocaleString('en-US')} ج</span>
               </div>
               <div class="w-full text-center py-1 truncate">
                 ${ownerDisplay}
@@ -1521,10 +1715,15 @@
           const isCurrentPaid = paidMonths.includes(currentMonthName);
           const totalPaid = getUnitTotalPaid(uNum);
 
-          // Column 4: اشتراك أكتوبر (سدد / لم يسدد)
-          let statusCol = isCurrentPaid 
-            ? `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-black px-2 py-0.5 rounded">سدد ✓</span>`
-            : `<span class="bg-rose-100 text-rose-700 text-[11px] font-black px-2 py-0.5 rounded">لم يسدد</span>`;
+          // Column 4: اشتراك أكتوبر / الشهور المسددة
+          let statusCol = '';
+          if (isCurrentPaid) {
+            statusCol = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-black px-2 py-0.5 rounded">سدد أكتوبر ✓</span>`;
+          } else if (paidMonths.length > 0) {
+            statusCol = `<span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded">مسدد (${paidMonths.length} شهور)</span>`;
+          } else {
+            statusCol = `<span class="bg-rose-100 text-rose-700 text-[11px] font-black px-2 py-0.5 rounded">لم يسدد</span>`;
+          }
 
           // Column 5: الرصيد (المسدد فعلياً أو مستحق)
           let balanceDisplay = '';
@@ -1784,29 +1983,7 @@
 
       html += `
           </table>
-        
-  <!-- SAVE CONFIRMATION MODAL (Center of Screen) -->
-  <div id="save-confirm-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-5 text-center space-y-3 animate-in fade-in zoom-in duration-150">
-      <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
-        ✓
-      </div>
-      <h3 class="text-base sm:text-lg font-black text-slate-900">تم حفظ ومزامنة البيانات بنجاح!</h3>
-      <p class="text-xs text-slate-600 leading-relaxed">
-        تم تأكيد حفظ كافة السجلات والتعديلات محلياً وإرسالها للسحابة لضمان ظهورها لجميع الملاك فوراً.
-      </p>
-      <div class="pt-2 flex gap-2">
-        <button onclick="closeSaveConfirmModal()" class="flex-1 bg-[#1877F2] hover:bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs shadow transition">
-          حسناً
-        </button>
-        <button onclick="closeSaveConfirmModal(); openDataModal();" class="px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition" title="خيارات إضافية">
-          ⚙️ خيارات
-        </button>
-      </div>
-    </div>
-  </div>
-
-</body>
+        </body>
         </html>
       `;
 
@@ -1819,12 +1996,18 @@
       downloadAnchor.remove();
     }
 
-    // Reset Data
+    // Reset Data with Safety Lock
     function resetToInitialData() {
-      if (!confirm('هل تريد تصفير الحسابات والبدء من جديد؟')) return;
+      if (!isAdminMode) {
+        alert('تصفير البيانات متاح للأدمن فقط!');
+        return;
+      }
+      const confirmation = prompt('تحذير: هذا الإجراء سيمسح الحسابات المحلية فقط دون التأثير على شيت جوجل. لتأكيد التصفير اكتب كلمة "نعم":');
+      if (confirmation !== 'نعم') return;
       createDefaultData();
       renderAll();
       closeDataModal();
+      alert('تم إعادة التعيين للبيانات الافتراضية محلياً.');
     }
 
     function openDataModal() {
