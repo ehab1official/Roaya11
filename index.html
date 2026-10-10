@@ -527,6 +527,20 @@
       "أكتوبر 2027"
     ];
 
+    // Dynamic current active month helper
+    function getCurrentActiveMonth() {
+      const now = new Date();
+      const arabicMonths = [
+        "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+        "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+      ];
+      const mName = arabicMonths[now.getMonth()] + " " + now.getFullYear();
+      if (MONTHS_ORDER.includes(mName)) {
+        return mName;
+      }
+      return "أكتوبر 2026";
+    }
+
     // Master Permanent Storage Key & Migration from all legacy keys
     const MASTER_STORAGE_KEY = 'bldg11_roaya_master_data';
     const LEGACY_STORAGE_KEYS = [
@@ -1408,7 +1422,7 @@
       select.innerHTML = '';
 
       const paidMonths = getUnitMonthlyPaidMonths(unitId);
-      let firstAvailable = null;
+      const currentActiveMonth = getCurrentActiveMonth();
 
       MONTHS_ORDER.forEach(m => {
         const option = document.createElement('option');
@@ -1420,13 +1434,34 @@
         } else {
           option.innerText = m;
           option.className = 'text-slate-800 font-bold';
-          if (!firstAvailable) firstAvailable = m;
         }
         select.appendChild(option);
       });
 
-      if (firstAvailable) {
-        select.value = firstAvailable;
+      // Priority Selection Logic:
+      // 1. If current active month is unpaid, default to it!
+      // 2. If current active month is already paid, jump to the first upcoming unpaid month after it.
+      // 3. Fallback: first available unpaid month overall.
+      let targetToSelect = null;
+      if (!paidMonths.includes(currentActiveMonth)) {
+        targetToSelect = currentActiveMonth;
+      } else {
+        const currentIdx = MONTHS_ORDER.indexOf(currentActiveMonth);
+        if (currentIdx !== -1) {
+          for (let i = currentIdx + 1; i < MONTHS_ORDER.length; i++) {
+            if (!paidMonths.includes(MONTHS_ORDER[i])) {
+              targetToSelect = MONTHS_ORDER[i];
+              break;
+            }
+          }
+        }
+        if (!targetToSelect) {
+          targetToSelect = MONTHS_ORDER.find(m => !paidMonths.includes(m));
+        }
+      }
+
+      if (targetToSelect) {
+        select.value = targetToSelect;
       }
     }
 
@@ -1497,20 +1532,23 @@
 
       if (type === 'اشتراك شهري') {
         const paidMonths = getUnitMonthlyPaidMonths(selectedUnitId);
-        const unpaidMonths = MONTHS_ORDER.filter(m => !paidMonths.includes(m));
         
-        if (unpaidMonths.length === 0) {
-          alert('تم سداد كافة الشهور المتاحة لهذه الشقة مسبقاً!');
+        if (!targetMonth) {
+          alert('يرجى تحديد الشهر المطلوب تسجيل الدفعة له!');
           return;
         }
 
-        const selectedMonth = targetMonth || unpaidMonths[0];
+        if (paidMonths.includes(targetMonth)) {
+          alert(`شهر ${targetMonth} مسدد لهذه الشقة مسبقاً!`);
+          return;
+        }
+
         const newPayment = {
           id: 'pay_' + Date.now(),
           unitId: selectedUnitId,
           type: 'اشتراك شهري',
           amount: totalAmount,
-          month: selectedMonth,
+          month: targetMonth,
           date: date
         };
         appData.payments.push(newPayment);
